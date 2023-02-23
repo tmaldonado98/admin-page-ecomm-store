@@ -1,0 +1,7 @@
+#buttons {
+    width: 25%;
+    margin: 3rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rems;
+}
