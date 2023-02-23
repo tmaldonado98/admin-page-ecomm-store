@@ -1,26 +1,41 @@
 
-import { BrowserRouter, Route, Link } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
 import Form from './Form';
 import LoginBtn from './LoginBtn';
-import AdminLogin from './AdminLogin';
+import DemoLogin from './DemoLogin';
+import Dashboard from './routes/Dashboard';
+import DemoDashboard from './routes/DemoDashboard';
 
 function App() {
   return (
-  <BrowserRouter>
-  
-      <div className="App">
-        <Form />
+  // <BrowserRouter>
+  <>
+    
+        <div className="App">
+          <Form />
+        </div>  
+    
+          <div id='buttons'>
+            <Link to="/Dashboard">
+              <LoginBtn />
+            </Link>
+            <Link to="/DemoDashboard">
+              <DemoLogin/>
+            </Link>
+          </div>
+        
+  </>
 
-        <div id='buttons'>
-          <LoginBtn>
-            <Link to="/Dashboard"/>
-          </LoginBtn>
-          <AdminLogin>
-            <Link to="/DemoDashboard"/>
-          </AdminLogin>
-        </div>
-      </div>
-  </BrowserRouter>
+  // {/* <Routes>  */}
+      
+      
+  
+      
+
+  
+  // </Routes>
+  // </BrowserRouter>
   );
 }
 
