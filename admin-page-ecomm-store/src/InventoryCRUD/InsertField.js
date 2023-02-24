@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import './InsertField.css';
+import Axios from 'axios';
 
 function onlyNumbers(e){
     if (e.keyCode >= 65 && e.keyCode <= 90) {
@@ -12,11 +13,10 @@ export default function InsertField() {
     
     function insert(){
         console.log('inserted')
+        Axios.post('http://localhost:3001/api/insert', 
+        {test: 'testing from admin'}).then(()=>{alert('test inserted')}).catch(error => alert(error))
     }
 
-    function noInsert(){
-        console.log('empty inputs')
-    }
     const input = document.querySelectorAll('input');
     return (
         <>

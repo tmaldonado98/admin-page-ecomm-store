@@ -22,8 +22,8 @@ app.post('/api/insert', (req, res) => {
 
     const test = req.body.test;  
     // const test = 'test';
-    const insert = 'INSERT INTO inventory (name, size, medium, prodkey, imgsrc, price) VALUES (?, ?, ?, ?, ?, ?)';
-    db.query(insert, [test, test, test, test, test, 5400], (err, result) => {
+    const insert = 'INSERT INTO inventory (name, size, medium, prodkey,  price) VALUES (?, ?, ?, ?, ?)';
+    db.query(insert, [test, test, test, test,  5400], (err, result) => {
         if (err) {console.log(err)}
         console.log(result);
         // res.send(insert);

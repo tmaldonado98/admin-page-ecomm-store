@@ -45,7 +45,7 @@ export default function SimpleAccordion() {
             malesuada lacus ex, sit amet blandit leo lobortis eget.
           </Typography>
         </AccordionDetails> */}
-        <EditDeleteField/>
+        {/* <EditDeleteField/> */}
       </Accordion>
 
 
