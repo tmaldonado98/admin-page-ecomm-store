@@ -18,8 +18,8 @@ export default function Nav() {
       >
 
         <ButtonGroup variant="outline" aria-label="text button group">
-          <Link to="/Dashboard">
-            <Button>Dashboard</Button>
+          <Link to="/OrderRegistry">
+            <Button>Order Registry</Button>
           </Link>
           <Link to="/ProdInventory">
             <Button>Inventory</Button>

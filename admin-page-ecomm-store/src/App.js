@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
 import Form from './Form';
 import LoginBtn from './LoginBtn';
 import DemoLogin from './DemoLogin';
-import Dashboard from './routes/Dashboard';
+import OrderRegistry from './routes/OrderRegistry';
 import DemoDashboard from './routes/DemoDashboard';
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
         </div>  
     
           <div id='buttons'>
-            <Link to="/Dashboard">
+            <Link to="/OrderRegistry">
               <LoginBtn />
             </Link>
             <Link to="/DemoDashboard">

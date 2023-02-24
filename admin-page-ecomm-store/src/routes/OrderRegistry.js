@@ -160,6 +160,6 @@ function DashboardContent() {
   );
 }
 
-export default function Dashboard() {
+export default function OrderRegistry() {
   return <DashboardContent />;
 }

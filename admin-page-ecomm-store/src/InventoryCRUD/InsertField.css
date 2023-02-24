@@ -1,0 +1,11 @@
+fieldset {
+    width: 70%;
+    margin: 2rem auto;
+
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

@@ -4,7 +4,7 @@ import App from './App';
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
 import LoginBtn from './LoginBtn';
 import DemoLogin from './DemoLogin';
-import Dashboard from './routes/Dashboard';
+import OrderRegistry from './routes/OrderRegistry';
 import DemoDashboard from './routes/DemoDashboard';
 import ProdInventory from './routes/ProdInventory';
 
@@ -15,7 +15,7 @@ root.render(
     <BrowserRouter>
           <Routes>
                 <Route exact path='/' element={<App />}/>
-                <Route path='/Dashboard' element={<Dashboard/>}/>
+                <Route path='/OrderRegistry' element={<OrderRegistry/>}/>
                 <Route path='/DemoDashboard' element={<DemoDashboard/>}/>
                 <Route path='/ProdInventory' element={<ProdInventory/>}/>
             
