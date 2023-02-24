@@ -19,6 +19,10 @@ function App() {
           <div id='buttons'>
             <Link to="/OrderRegistry">
               <LoginBtn />
+
+              {/* instead of Link component, remove it and add a
+              conditional redirect to the orderregistry component
+              */}
             </Link>
             <Link to="/DemoDashboard">
               <DemoLogin/>
