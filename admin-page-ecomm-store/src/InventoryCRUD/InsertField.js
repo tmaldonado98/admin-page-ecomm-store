@@ -11,7 +11,8 @@ function onlyNumbers(e){
 
 export default function InsertField() {
     
-    function insert(){
+    function insert(e){
+        e.preventDefault();
         let inputValues = {};
         const input = document.getElementsByTagName("input");
         // console.log(input);
@@ -24,37 +25,27 @@ export default function InsertField() {
                 medium: (input['medium'].value),
     
                 price: (input['price'].value),
-                blob: (input['img'].value),
+                blob: (input['img'].value.toString('base64')),
                 prodkey: (input['prodkey'].value)
             }
         }
 
-        // inputValues.push(dynamicObjName);
-
-        // for (let i = 0; i < input.length; i++) {
-            // inputValues.dynamicObjName.name = (input['name'].value);
-            // inputValues[dynamicObjName].size(input[i]['name=size'].value);
-            // inputValues[dynamicObjName].medium(input[i]['name=medium'].value);
-
-            // inputValues[dynamicObjName].price(input[i]['name=price'].value);
-            // inputValues[dynamicObjName].blob(input[i]['name=img'].value);
-            // inputValues[dynamicObjName].prodkey(input[i]['name=prodkey'].value);
-        // }
-
         console.log(inputValues)
         const dynObj = Object.keys(inputValues);
         
-        Axios.post('http://localhost:3003/api/insert', inputValues)
+        Axios.post('http://localhost:3003/api/insert', inputValues, {headers: {'Content-Type': 'multipart/form-data'}})
         .catch(error => alert(error))
 
-        // return input.value = '';
+        // Axios.post('http://localhost:3003/img', inputValues)
+        // .catch(error => alert(error))
+        // // return input.value = '';
     }
 
     return (
         <>
         <fieldset>
             <legend>Add Product To Inventory And Present On Live Site</legend>
-            <form encType="multipart/form-data" id='container'>
+            <form action='/api/insert' method='post' encType="multipart/form-data" id='container'>
                 
                 {/* <div > */}
                     
@@ -79,7 +70,7 @@ export default function InsertField() {
                     <input required name='prodkey' type="text"/>
                     <br/>
                     {/* <label for='submit'>Add Product To Inventory And Present On Live Site</label> */}
-                    <Button variant='contained' onClick={insert}>Add Product</Button>
+                    <Button type='submit' variant='contained' onClick={insert}>Add Product</Button>
                    
             {/* </div> */}
             </form> 

@@ -3,8 +3,8 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const app = express();
 const cors = require('cors');
-const mysql = require('mysql');
-// const multer = require('multer');
+const mysql = require('mysql2');
+const multer = require('multer');
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -18,28 +18,47 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyparser.urlencoded({extended: true}))
 
-// const upload =  multer({storage: multer.memoryStorage()}); upload.single("img"),
+const upload =  multer({storage: multer.memoryStorage()}); 
 
-app.post('/api/insert', (req, res) => {
+app.post('/api/insert', upload.single("img"), (req, res) => {
+
     const reference = req.body;
     const skipDynObj = Object.values(reference)
-
+    let image = req.file.buffer;
+    console.log(image);
     const name = skipDynObj[0].name; 
-    // console.log(name);
     const size = skipDynObj[0].size;  
+    const blob = skipDynObj[0].blob.toString('base64');
+    console.log(blob);
     const medium = skipDynObj[0].medium;  
     const price = skipDynObj[0].price;  
-    const blob = skipDynObj[0].blob;  
     const prodkey = skipDynObj[0].prodkey;  
 
+    // console.log(blob);
     const insert = 'INSERT INTO inventory (name, size, medium, price, imgsrc, prodkey) VALUES (?, ?, ?, ?, ?, ?)';
     db.query(insert, [name, size, medium, price, blob, prodkey], (err, result) => {
         if (err) {console.log(err)}
         console.log(result);
-        // res.send(insert);
+
+    })
+    
+});
+
+
+app.get('/getRows', (request, response) => {
+
+    // const rows = req.body;
+
+
+    const select = 'SELECT * FROM inventory';
+    db.query(select, (err, resu) => {
+        if (err) {console.log(err)}
+        console.log(resu);
+        response.json(resu);
+
     })
 })
- 
+
 const port = 3003;
 
 app.listen(port, () => {

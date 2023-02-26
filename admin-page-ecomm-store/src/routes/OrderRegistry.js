@@ -25,6 +25,12 @@ import { MDBBtn } from 'mdb-react-ui-kit';
 import ProdInventory from './ProdInventory';
 import {Link} from 'react-router-dom';
 import Nav from '../Nav';
+import Axios from 'axios';
+import {useState, useEffect} from 'react';
+// import { Buffer } from "buffer";
+
+
+
 
 function Copyright(props) {
   return (
@@ -93,6 +99,21 @@ function DashboardContent() {
     setOpen(!open);
   };
 
+  const [rows, setRows] = useState(null);
+
+  useEffect(()=> {
+    Axios.get('http://localhost:3003/getRows')
+    .then(result => setRows(result.data))
+    // .then(result => console.log(result.data))
+    // .then(console.log(rows))
+    .catch(error => alert(error))
+
+  }, []);
+  
+  function renderRows(){
+    setRows('test')
+  }
+
   return (
     <ThemeProvider theme={mdTheme}>
 
@@ -112,7 +133,7 @@ function DashboardContent() {
               }}
         >
               <Nav/>
-          <Toolbar />
+          {/* <Toolbar /> */}
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Chart */}
@@ -122,9 +143,22 @@ function DashboardContent() {
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 240,
+                    height: 350,
                   }}
                 >
+                  <button onClick={renderRows}>Test</button>
+                  {console.log(rows)}
+                  <div>
+                      {rows ? ( 
+                    <ul>
+
+                    {rows.map(item=> (
+                          <li key={item.prodkey}>{item.name}{item.medium}{item.size}{item.price}{(item.imgsrc.data.toString('base64'))}</li>
+                    ))}
+                    </ul>)
+                     : ('Loading...')
+                    }
+                  </div>
                   {/* <Chart /> */}
                 </Paper>
               </Grid>
