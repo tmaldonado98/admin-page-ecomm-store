@@ -24,12 +24,10 @@ app.post('/api/insert', upload.single("img"), (req, res) => {
 
     const reference = req.body;
     const skipDynObj = Object.values(reference)
-    let image = req.file.buffer;
-    console.log(image);
     const name = skipDynObj[0].name; 
     const size = skipDynObj[0].size;  
-    const blob = skipDynObj[0].blob.toString('base64');
-    console.log(blob);
+    const blob = skipDynObj[0].blob;
+    // console.log(blob);
     const medium = skipDynObj[0].medium;  
     const price = skipDynObj[0].price;  
     const prodkey = skipDynObj[0].prodkey;  
