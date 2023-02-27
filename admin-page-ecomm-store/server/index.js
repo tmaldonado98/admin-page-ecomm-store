@@ -26,7 +26,7 @@ app.post('/api/insert', upload.single("img"), (req, res) => {
     const skipDynObj = Object.values(reference)
     const name = skipDynObj[0].name; 
     const size = skipDynObj[0].size;  
-    const blob = skipDynObj[0].blob;
+    const image = skipDynObj[0].image;
     // console.log(blob);
     const medium = skipDynObj[0].medium;  
     const price = skipDynObj[0].price;  
@@ -34,7 +34,7 @@ app.post('/api/insert', upload.single("img"), (req, res) => {
 
     // console.log(blob);
     const insert = 'INSERT INTO inventory (name, size, medium, price, imgsrc, prodkey) VALUES (?, ?, ?, ?, ?, ?)';
-    db.query(insert, [name, size, medium, price, blob, prodkey], (err, result) => {
+    db.query(insert, [name, size, medium, price, image, prodkey], (err, result) => {
         if (err) {console.log(err)}
         console.log(result);
 

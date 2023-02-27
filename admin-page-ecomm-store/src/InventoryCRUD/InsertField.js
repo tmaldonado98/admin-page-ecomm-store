@@ -36,31 +36,96 @@ const firebaseApp = initializeApp(firebaseConfig);
 export default function InsertField() {
 
     const [keyState, setKeyState] = useState('');
+    const [file, setFile] = useState(null)
+    const [imageSource, setImageSource] = useState(null);   
 
-    function insert(){
-        // e.preventDefault();
-        let inputValues = {};
+    function getFileInfo(event){
+        setInputValues({ ...inputValues, img: 'ok' });
+        setFile(event.target.files[0])
+        // file = event.target.files[0];
+        console.log(file)
+    }
+
+    function handleFileUpload(event){
+
+        let imgName =  keyState;
+
+        console.log(file)
+
+        const storage = getStorage(firebaseApp);
+        const storageRef = ref(storage, `images/${imgName}`);
+        
+        uploadBytes(storageRef, file)
+        .then((snapshot) => {
+            // storageRef = 
+            console.log('File uploaded successfully with name: ' + imgName);
+
+            getDownloadURL(storageRef)
+            .then((url) => {
+                setImageSource(url);
+                // const img = document.getElementById('preview');
+                // img.setAttribute('src', url);
+                console.log(imageSource);
+            })
+            setKeyState('');
+        })
+        .catch((error) => {
+            console.error('Error uploading file', error);
+        });
+        
+
+        // setTimeout(() => {
+
+            // await getDownloadURL(storageRef)
+            //     .then((url) => {
+            //         setImageSource(url);
+            //         // const img = document.getElementById('preview');
+            //         // img.setAttribute('src', url);
+            //         console.log(imageSource);
+            // })
+        // }, 1000)
+
+        // Create a reference to the file in Firebase Storage
+        // const storageRef = storage.ref().child(`images/${file.name}`);
+
+    }
+
+
+    async function insert(){
+        // const fileInput = document.querySelector('input[type=file]').event;
+
+        handleFileUpload();
+
+        let inputObject = {};
         const input = document.getElementsByTagName("input");
-        // console.log(input);
+
         let dynamicObjName = input['prodkey'].value;
         
-        inputValues = {
+        inputObject = {
             [dynamicObjName]: {
-                name: (input['name'].value),
-                size: (input['size'].value),
-                medium: (input['medium'].value),
+                name: inputValues.name,
+                size: inputValues.size,
+                medium: inputValues.medium,
+
+                price: inputValues.price,
+                image: imageSource,
+                prodkey: inputValues.prodkey,
+                // name: (input['name'].value),
+                // size: (input['size'].value),
+                // medium: (input['medium'].value),
     
-                price: (input['price'].value),
-                blob: (input['img'].value),
-                prodkey: (input['prodkey'].value)
+                // price: (input['price'].value),
+                // // blob: (input['img'].value),
+                // image: imageSource,
+                // prodkey: (input['prodkey'].value)
             }
         }
 
-        console.log(inputValues)
-        const dynObj = Object.keys(inputValues);
+        console.log(inputObject)
+        const dynObj = Object.keys(inputObject);
         
-        Axios.post('http://localhost:3003/api/insert', inputValues, {headers: {'Content-Type': 'multipart/form-data'}})
-        .then(input.value = '')
+        Axios.post('http://localhost:3003/api/insert', inputObject, {headers: {'Content-Type': 'multipart/form-data'}})
+        // .then(input.value = '')
         .catch(error => alert(error), input.value = '')
 
         // Axios.post('http://localhost:3003/img', inputValues)
@@ -82,47 +147,7 @@ export default function InsertField() {
     }
     
     
-    function handleFileUpload(event){
-        setInputValues({ ...inputValues, img: 'ok' });
-        
-        // const pathReference = ref(storage, 'images/stars.jpg');
-        // const [imgRef, setImgRef] = useState(null);
 
-
-        
-        // let placeholdername = ;
-        const imgName =  keyState;
-        const file = event.target.files[0];
-
-        const storage = getStorage(firebaseApp);
-        const storageRef = ref(storage, `images/${imgName}`);
-        
-        uploadBytes(storageRef, file)
-        .then((snapshot) => {
-            
-            console.log('File uploaded successfully with name: ' + imgName);
-        })
-        .catch((error) => {
-            console.error('Error uploading file', error);
-        });
-        
-        setTimeout(() => {
-
-            getDownloadURL(storageRef)
-                .then((url) => {
-                    const img = document.getElementById('preview');
-                    img.setAttribute('src', url);
-            })
-        }, 1000)
-            
-        
-        
-
-
-        // Create a reference to the file in Firebase Storage
-        // const storageRef = storage.ref().child(`images/${file.name}`);
-
-    }
     
     const [status, setStatus] = useState(true)
 
@@ -174,6 +199,7 @@ export default function InsertField() {
           });
           setStatus(true);
           document.querySelector('input[type=file]').value = '';
+        //   input.value = ''
     }
 
     return (
@@ -200,8 +226,8 @@ export default function InsertField() {
                     <input required={true} value={inputValues.prodkey} onChange={handleInputChange} onKeyUp={handleKeyInput} name='prodkey' type="text"/>
                     
                     <label for="img">Image File</label>
-                    <input required={true} onChange={handleFileUpload} name='img' type="file" multiple="false" accept="image/*" />
-                    
+                    <input required={true} onChange={getFileInfo} name='img' type="file" multiple="false" accept="image/*" />
+
                     <div id='img-preview'>
                         <p>Image Preview (size will be bigger on store page)</p>
                         {<img id='preview' width={200} height={200} />}

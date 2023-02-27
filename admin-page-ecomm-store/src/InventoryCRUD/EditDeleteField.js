@@ -45,7 +45,7 @@ const [rows, setRows] = useState(null);
                                 <td>{item.medium}</td>
                                 <td>{item.size}</td>
                                 <td>{item.price}</td>
-                                <td>{(item.imgsrc.data.toString('base64'))}</td>
+                                <td>{(item.imgsrc)}</td>
                                 <td>{item.prodkey}</td>
                             </tr>
                         ))}
