@@ -7,6 +7,7 @@ import DemoLogin from './DemoLogin';
 import OrderRegistry from './routes/OrderRegistry';
 import DemoDashboard from './routes/DemoDashboard';
 import ProdInventory from './routes/ProdInventory';
+import { useMemo } from 'react';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

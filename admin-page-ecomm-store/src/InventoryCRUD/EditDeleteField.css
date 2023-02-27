@@ -1,0 +1,21 @@
+#loading {
+    text-align: center;
+}
+
+th {
+    border-bottom: 5px double black;
+}
+
+tr:nth-child(even) {
+    background-color: #bababab1;
+}
+tr:nth-child(even):hover {
+    background-color: #e3e3e3;
+}
+
+tr:nth-child(odd) {
+    background-color: #ecececb6;
+}
+tr:nth-child(odd):hover {
+    background-color: #ececec;
+}

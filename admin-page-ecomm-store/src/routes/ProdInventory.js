@@ -37,7 +37,7 @@ export default function SimpleAccordion() {
           aria-controls="panel2a-content"
           id="panel2a-header"
         >
-          <Typography>Edit or Delete Items From Inventory</Typography>
+          <Typography>View, Edit or Delete Items From Inventory</Typography>
         </AccordionSummary>
         {/* <AccordionDetails>
           <Typography>
@@ -45,7 +45,7 @@ export default function SimpleAccordion() {
             malesuada lacus ex, sit amet blandit leo lobortis eget.
           </Typography>
         </AccordionDetails> */}
-        {/* <EditDeleteField/> */}
+        <EditDeleteField/>
       </Accordion>
 
 

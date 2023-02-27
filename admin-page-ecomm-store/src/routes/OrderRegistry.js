@@ -99,21 +99,17 @@ function DashboardContent() {
     setOpen(!open);
   };
 
-  const [rows, setRows] = useState(null);
+  // const [rows, setRows] = useState(null);
 
-  useEffect(()=> {
-    Axios.get('http://localhost:3003/getRows')
-    .then(result => setRows(result.data))
-    // .then(result => console.log(result.data))
-    // .then(console.log(rows))
-    .catch(error => alert(error))
+  // useEffect(()=> {
+  //   Axios.get('http://localhost:3003/getRows')
+  //   .then(result => setRows(result.data))
+  //   // .then(result => console.log(result.data))
+  //   // .then(console.log(rows))
+  //   .catch(error => alert(error))
 
-  }, []);
+  // }, []);
   
-  function renderRows(){
-    setRows('test')
-  }
-
   return (
     <ThemeProvider theme={mdTheme}>
 
@@ -146,8 +142,7 @@ function DashboardContent() {
                     height: 350,
                   }}
                 >
-                  <button onClick={renderRows}>Test</button>
-                  {console.log(rows)}
+                  {/* {console.log(rows)}
                   <div>
                       {rows ? ( 
                     <ul>
@@ -158,7 +153,7 @@ function DashboardContent() {
                     </ul>)
                      : ('Loading...')
                     }
-                  </div>
+                  </div> */}
                   {/* <Chart /> */}
                 </Paper>
               </Grid>
@@ -194,6 +189,8 @@ function DashboardContent() {
   );
 }
 
-export default function OrderRegistry() {
+ function OrderRegistry() {
   return <DashboardContent />;
 }
+
+export default React.memo(OrderRegistry);
