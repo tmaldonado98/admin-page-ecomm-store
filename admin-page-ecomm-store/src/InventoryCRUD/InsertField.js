@@ -4,7 +4,7 @@ import Axios from 'axios';
 import { initializeApp } from 'firebase/app';
 // import firebase from 'firebase/app';
 import { getStorage, ref, uploadBytes } from "firebase/storage";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function onlyNumbers(e){
     if (e.keyCode >= 65 && e.keyCode <= 90) {
@@ -64,7 +64,7 @@ export default function InsertField() {
 
         // Axios.post('http://localhost:3003/img', inputValues)
         // .catch(error => alert(error))
-        // // return input.value = '';
+        // return s.value = '';
     
             // path to storage bucket
         // gs://vea-collections.appspot.com
@@ -76,11 +76,11 @@ export default function InsertField() {
         return setKeyState(e.target.value);
     }
     
-    // const [status, setStatus] = useState(true)
-
+    
     function handleFileUpload(event){
-
-
+        setInputValues({ ...inputValues, img: true });
+        
+        
         // let placeholdername = ;
         const imgName =  keyState;
         const file = event.target.files[0];
@@ -88,60 +88,104 @@ export default function InsertField() {
         const storage = getStorage(firebaseApp);
         const storageRef = ref(storage, `images/${imgName}.jpg`);
 
-
+        
         // Create a reference to the file in Firebase Storage
         // const storageRef = storage.ref().child(`images/${file.name}`);
-
+        
         uploadBytes(storageRef, file)
         .then((snapshot) => {
-          
-          console.log('File uploaded successfully with name: ' + imgName);
+            
+            console.log('File uploaded successfully with name: ' + imgName);
         })
         .catch((error) => {
-          console.error('Error uploading file', error);
+            console.error('Error uploading file', error);
         });
-
-    
+        
+        
     }
+    
+    const [status, setStatus] = useState(true)
 
-    const formInputs = document.getElementsByTagName('input');
-    // if (for) {
-        
-        // }
-        
-        console.log(formInputs);
+    const [inputValues, setInputValues] = useState({
+        name: '',
+        size: '',
+        medium: '',
+        price: '',
+        img: false,
+        prodkey: '',
+      });
+    
+      const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setInputValues({ ...inputValues, [name]: value });
+      };
+    
+      useEffect(() => {
+        const validName = inputValues.name !== '';
+        const validSize = inputValues.size !== '';
+        const validMedium = inputValues.medium !== '';
+
+        const validPrice = inputValues.price !== '';
+        const validImg = inputValues.img !== false;
+        const validProdkey = inputValues.prodkey !== '';
+
+        setStatus(validName && validSize && validMedium && validPrice && validImg && validProdkey ? false : true);
+      }, [inputValues]);
+    
+    //   function handleFileInput(){
+    //     // handleFileUpload(event);
+    //     setInputValues({ ...inputValues, img: true });
+    //   }
+
+    //   function handleKeyChange(){
+    //     handleKeyInput();
+    //     handleInputChange();
+    //   }
+    
+    function handleSubmit (){
+        insert();
+        setInputValues({
+            name: '',
+            size: '',
+            medium: '',
+            price: '',
+            img: false,
+            prodkey: '',
+          });
+          setStatus(true);
+    }
 
     return (
         <>
         <fieldset>
             <legend>Add Product To Inventory And Present On Live Site</legend>
-            <form action='/api/insert' method='post' encType="multipart/form-data" id='container'>
-                
+            <form onSubmit={handleSubmit} encType="multipart/form-data" id='container'>
+                {/* action='/api/insert' method='post' */}
                 {/* <div > */}
                     
                     <label for="name">Item Name (no "" double nor '' single quotes)</label>
-                    <input required={true} placeholder='Item Name' name='name' type="text"/>
+                    <input onChange={handleInputChange} required={true} placeholder='Item Name' name='name' type="text"/>
                     
                     <label for="size">Size (format as: number" x number")</label>
-                    <input required={true} placeholder='ex: 30" x 30"' name='size' type="text"/>
+                    <input onChange={handleInputChange} required={true} placeholder='ex: 30" x 30"' name='size' type="text"/>
                     
                     <label for="medium">Medium</label>
-                    <input required={true} name='medium' type="text"/>
+                    <input onChange={handleInputChange} required={true} name='medium' type="text"/>
                     
                     <label for="price">Price (numbers only)</label>
-                    <input required={true} placeholder='ex: 20' name='price' inputMode='numeric' pattern="\d*" onKeyDown={onlyNumbers} />
+                    <input onChange={handleInputChange} required={true} placeholder='ex: 20' name='price' inputMode='numeric' pattern="\d*" onKeyDown={onlyNumbers} />
                     
                     <label for="img">Image File</label>
                     <input required={true}  onChange={handleFileUpload} name='img' type="file" multiple="false" accept="image/*" />
-                    {/* ADD REQUIRED FOR PHOTO */}
+                    
                     {/* <div id='img-preview'><p>Fetch image for preview</p></div> */}
                     
                     <label for="prodkey">Write a product key in all lowercase or all uppercase. <br/> Recommended to assign one alphabetic integer per inventory item.<br/> For example: "one" for item 1, "two" for item 2, "three" for item 3, etc. </label>
-                    <input required={true} onKeyUp={handleKeyInput} name='prodkey' type="text"/>
+                    <input required={true} onChange={handleInputChange} onKeyUp={handleKeyInput} name='prodkey' type="text"/>
                     <br/>
                     {/* <label for='submit'>Add Product To Inventory And Present On Live Site</label> */}
-                    <Button  type='submit' variant='contained' onClick={insert}>Add Product</Button>
-                   {/* disabled={status} */}
+                    <Button disabled={status} type='submit' variant='contained' >Add Product</Button>
+                    {/* onClick={insert} */}
             {/* </div> */}
             </form> 
             
