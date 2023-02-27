@@ -2,7 +2,13 @@ import { Button } from '@mui/material';
 import './InsertField.css';
 import Axios from 'axios';
 import { initializeApp } from 'firebase/app';
-// import firebase from 'firebase/app';
+import CircularProgress, {
+    CircularProgressProps,
+  } from '@mui/material/CircularProgress';
+  import Typography from '@mui/material/Typography';
+  import Box from '@mui/material/Box';
+  import Dialog from '@mui/material/Dialog';
+
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useState, useEffect } from 'react';
 
@@ -25,53 +31,57 @@ const firebaseConfig = {
  };
 const firebaseApp = initializeApp(firebaseConfig);
 
-
-// // Create a reference to 'mountains.jpg'
-// const mountainsRef = ref(storage, 'mountains.jpg');
-
-// // Create a reference to 'images/mountains.jpg'
-// const mountainImagesRef = ref(storage, 'images/mountains.jpg');
-
-
 export default function InsertField() {
+    const storage = getStorage(firebaseApp);
 
     const [keyState, setKeyState] = useState('');
     const [file, setFile] = useState(null)
-    const [imageSource, setImageSource] = useState(null);   
+    // const [imageSource, setImageSource] = useState('');   
+    const [storageRef, setStorageRef] = useState(null)
+    const [isUploading, setIsUploading] = useState(false);
+
+    let imageSrc = null;
 
     function getFileInfo(event){
         setInputValues({ ...inputValues, img: 'ok' });
         setFile(event.target.files[0])
         // file = event.target.files[0];
-        console.log(file)
+        // console.log(file)
     }
-
-    function handleFileUpload(event){
-
+    useEffect(() => {
+        console.log(file);
         let imgName =  keyState;
 
-        console.log(file)
+        // const storageRef = ref(storage, `images/${imgName}`);
+        setStorageRef(ref(storage, `images/${imgName}`))
+        console.log('storageRef state updated ' + storageRef)
+        console.log('name of image is '+ imgName)
+    }, [file]);
+    
+    function handleFileUpload(event){
 
-        const storage = getStorage(firebaseApp);
-        const storageRef = ref(storage, `images/${imgName}`);
+        // let imgName =  keyState;
+
+        // const storage = getStorage(firebaseApp);
+        // const storageRef = ref(storage, `images/${imgName}`);
         
-        uploadBytes(storageRef, file)
-        .then((snapshot) => {
-            // storageRef = 
-            console.log('File uploaded successfully with name: ' + imgName);
+        // uploadBytes(storageRef, file)
+        // .then((snapshot) => {
+        //     // storageRef = 
+        //     console.log('File uploaded successfully with name: ' + imgName);
 
-            getDownloadURL(storageRef)
-            .then((url) => {
-                setImageSource(url);
-                // const img = document.getElementById('preview');
-                // img.setAttribute('src', url);
-                console.log(imageSource);
-            })
-            setKeyState('');
-        })
-        .catch((error) => {
-            console.error('Error uploading file', error);
-        });
+        //     getDownloadURL(storageRef)
+        //     .then((url) => {
+        //         setImageSource(url);
+        //         // const img = document.getElementById('preview');
+        //         // img.setAttribute('src', url);
+        //         console.log(imageSource);
+        //     })
+        //     setKeyState('');
+        // })
+        // .catch((error) => {
+        //     console.error('Error uploading file', error);
+        // });
         
 
         // setTimeout(() => {
@@ -90,55 +100,76 @@ export default function InsertField() {
 
     }
 
-
     async function insert(){
         // const fileInput = document.querySelector('input[type=file]').event;
 
-        handleFileUpload();
+        // handleFileUpload()
+        setIsUploading(true);
+        await uploadBytes(storageRef, file)
+        setIsUploading(false)
+        await getDownloadURL(storageRef)
+        .then((url) => {
+            console.log(url)
+            imageSrc = url;
+            // setImageSource(url);
+            // console.log(imageSource)
+            // const img = document.getElementById('preview');
+            // img.setAttribute('src', url);
+            setKeyState('');
+        })
+            
+        .then((snapshot) => {
+            console.log('File uploaded successfully with name: ' + keyState);           
+        })
+        .then(() => {
+            let inputObject = {};
+            const input = document.getElementsByTagName("input");
 
-        let inputObject = {};
-        const input = document.getElementsByTagName("input");
+            // let dynamicObjName = input['prodkey'].value;
+            let dynamicObjName = inputValues.prodkey;
+            
+            inputObject = {
+                [dynamicObjName]: {
+                    name: inputValues.name,
+                    size: inputValues.size,
+                    medium: inputValues.medium,
 
-        let dynamicObjName = input['prodkey'].value;
+                    price: inputValues.price,
+                    // image: imageSource,
+                    image: imageSrc,
+                    prodkey: inputValues.prodkey,
+                    // name: (input['name'].value),
+                    // size: (input['size'].value),
+                    // medium: (input['medium'].value),
         
-        inputObject = {
-            [dynamicObjName]: {
-                name: inputValues.name,
-                size: inputValues.size,
-                medium: inputValues.medium,
-
-                price: inputValues.price,
-                image: imageSource,
-                prodkey: inputValues.prodkey,
-                // name: (input['name'].value),
-                // size: (input['size'].value),
-                // medium: (input['medium'].value),
-    
-                // price: (input['price'].value),
-                // // blob: (input['img'].value),
-                // image: imageSource,
-                // prodkey: (input['prodkey'].value)
+                    // price: (input['price'].value),
+                    // // blob: (input['img'].value),
+                    // image: imageSource,
+                    // prodkey: (input['prodkey'].value)
+                }
             }
-        }
 
-        console.log(inputObject)
-        const dynObj = Object.keys(inputObject);
-        
-        Axios.post('http://localhost:3003/api/insert', inputObject, {headers: {'Content-Type': 'multipart/form-data'}})
-        // .then(input.value = '')
-        .catch(error => alert(error), input.value = '')
+                console.log(inputObject)
+                const dynObj = Object.keys(inputObject);
+                
+                Axios.post('http://localhost:3003/api/insert', inputObject, {headers: {'Content-Type': 'multipart/form-data'}})
+                // .then(input.value = '')
+                .catch(error => alert(error), input.value = '')
 
-        // Axios.post('http://localhost:3003/img', inputValues)
-        // .catch(error => alert(error))
-        // return input.value = '';
-    
-            // path to storage bucket
-        // gs://vea-collections.appspot.com
-        const img = document.getElementById('preview');
-        img.setAttribute('src', null);
+                // Axios.post('http://localhost:3003/img', inputValues)
+                // .catch(error => alert(error))
+                // return input.value = '';
+            
+                    // path to storage bucket
+                // gs://vea-collections.appspot.com
+                const img = document.getElementById('preview');
+                img.setAttribute('src', null);
 
-        alert('Your item has been added to your inventory!')
-
+                alert('Your item has been added to your inventory!')
+        })
+        .catch((error) => {
+           alert('Error uploading file', error);
+        })
     }
 
     function handleKeyInput (e){
@@ -199,7 +230,7 @@ export default function InsertField() {
           });
           setStatus(true);
           document.querySelector('input[type=file]').value = '';
-        //   input.value = ''
+          imageSrc = null;
     }
 
     return (
@@ -207,7 +238,7 @@ export default function InsertField() {
         <fieldset>
             <legend>Add Product To Inventory And Present On Live Site</legend>
             <form encType="multipart/form-data" id='container'>
-                
+                                       
                 {/* <div > */}
                     
                     <label for="name">Item Name (no "" double nor '' single quotes)</label>
@@ -226,7 +257,7 @@ export default function InsertField() {
                     <input required={true} value={inputValues.prodkey} onChange={handleInputChange} onKeyUp={handleKeyInput} name='prodkey' type="text"/>
                     
                     <label for="img">Image File</label>
-                    <input required={true} onChange={getFileInfo} name='img' type="file" multiple="false" accept="image/*" />
+                    <input required={true} on onChange={getFileInfo} name='img' type="file" multiple="false" accept="image/*" />
 
                     <div id='img-preview'>
                         <p>Image Preview (size will be bigger on store page)</p>
@@ -234,9 +265,19 @@ export default function InsertField() {
                     </div>
                     
                     <br/>
-                    {/* <label for='submit'>Add Product To Inventory And Present On Live Site</label> */}
-                    <Button disabled={status} onClick={handleSubmit} variant='contained' >Add Product</Button>
-                    {/* <p hidden={insertMsg} id='insertMsg'>Your item has been added to your inventory!</p> */}
+
+                    <Button disabled={status} onClick={handleSubmit} variant='contained' >{isUploading == false ? 'Add Product' : 
+<>
+                                    <CircularProgress/>
+                                    {/* </CircularProgress> */}
+                                        <Typography variant="caption" component="div" color="text.secondary">
+                                            Uploading...
+                                        </Typography>
+                                        
+    
+</>                      }
+                      </Button>
+                    
             {/* </div> */}
             </form>             
         </fieldset>
