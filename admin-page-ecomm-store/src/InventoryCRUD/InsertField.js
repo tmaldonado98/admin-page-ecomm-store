@@ -54,56 +54,54 @@ export default function InsertField() {
 
         // const storageRef = ref(storage, `images/${imgName}`);
         setStorageRef(ref(storage, `images/${imgName}`))
-        console.log('storageRef state updated ' + storageRef)
-        console.log('name of image is '+ imgName)
+        // console.log('storageRef state updated ' + storageRef)
+        // console.log('name of image is '+ imgName)
     }, [file]);
     
-    function handleFileUpload(event){
+    // function handleFileUpload(event){
 
-        // let imgName =  keyState;
+    //     // let imgName =  keyState;
 
-        // const storage = getStorage(firebaseApp);
-        // const storageRef = ref(storage, `images/${imgName}`);
+    //     // const storage = getStorage(firebaseApp);
+    //     // const storageRef = ref(storage, `images/${imgName}`);
         
-        // uploadBytes(storageRef, file)
-        // .then((snapshot) => {
-        //     // storageRef = 
-        //     console.log('File uploaded successfully with name: ' + imgName);
+    //     // uploadBytes(storageRef, file)
+    //     // .then((snapshot) => {
+    //     //     // storageRef = 
+    //     //     console.log('File uploaded successfully with name: ' + imgName);
 
-        //     getDownloadURL(storageRef)
-        //     .then((url) => {
-        //         setImageSource(url);
-        //         // const img = document.getElementById('preview');
-        //         // img.setAttribute('src', url);
-        //         console.log(imageSource);
-        //     })
-        //     setKeyState('');
-        // })
-        // .catch((error) => {
-        //     console.error('Error uploading file', error);
-        // });
+    //     //     getDownloadURL(storageRef)
+    //     //     .then((url) => {
+    //     //         setImageSource(url);
+    //     //         // const img = document.getElementById('preview');
+    //     //         // img.setAttribute('src', url);
+    //     //         console.log(imageSource);
+    //     //     })
+    //     //     setKeyState('');
+    //     // })
+    //     // .catch((error) => {
+    //     //     console.error('Error uploading file', error);
+    //     // });
         
 
-        // setTimeout(() => {
+    //     // setTimeout(() => {
 
-            // await getDownloadURL(storageRef)
-            //     .then((url) => {
-            //         setImageSource(url);
-            //         // const img = document.getElementById('preview');
-            //         // img.setAttribute('src', url);
-            //         console.log(imageSource);
-            // })
-        // }, 1000)
+    //         // await getDownloadURL(storageRef)
+    //         //     .then((url) => {
+    //         //         setImageSource(url);
+    //         //         // const img = document.getElementById('preview');
+    //         //         // img.setAttribute('src', url);
+    //         //         console.log(imageSource);
+    //         // })
+    //     // }, 1000)
 
-        // Create a reference to the file in Firebase Storage
-        // const storageRef = storage.ref().child(`images/${file.name}`);
+    //     // Create a reference to the file in Firebase Storage
+    //     // const storageRef = storage.ref().child(`images/${file.name}`);
 
-    }
+    // }
 
     async function insert(){
-        // const fileInput = document.querySelector('input[type=file]').event;
 
-        // handleFileUpload()
         setIsUploading(true);
         await uploadBytes(storageRef, file)
         setIsUploading(false)
@@ -119,7 +117,7 @@ export default function InsertField() {
         })
             
         .then((snapshot) => {
-            console.log('File uploaded successfully with name: ' + keyState);           
+            // console.log('File uploaded successfully with name: ' + keyState);           
         })
         .then(() => {
             let inputObject = {};
@@ -149,21 +147,14 @@ export default function InsertField() {
                 }
             }
 
-                console.log(inputObject)
+                // console.log(inputObject)
                 const dynObj = Object.keys(inputObject);
                 
                 Axios.post('http://localhost:3003/api/insert', inputObject, {headers: {'Content-Type': 'multipart/form-data'}})
-                // .then(input.value = '')
                 .catch(error => alert(error), input.value = '')
 
-                // Axios.post('http://localhost:3003/img', inputValues)
-                // .catch(error => alert(error))
-                // return input.value = '';
-            
-                    // path to storage bucket
-                // gs://vea-collections.appspot.com
-                const img = document.getElementById('preview');
-                img.setAttribute('src', null);
+                // const img = document.getElementById('preview');
+                // img.setAttribute('src', null);
 
                 alert('Your item has been added to your inventory!')
         })
@@ -173,7 +164,7 @@ export default function InsertField() {
     }
 
     function handleKeyInput (e){
-        console.log(e.target.value);
+        // console.log(e.target.value);
         return setKeyState(e.target.value);
     }
     
@@ -258,12 +249,12 @@ export default function InsertField() {
                     
                     <label for="img">Image File</label>
                     <input required={true} on onChange={getFileInfo} name='img' type="file" multiple="false" accept="image/*" />
-
+{/* 
                     <div id='img-preview'>
                         <p>Image Preview (size will be bigger on store page)</p>
                         {<img id='preview' width={200} height={200} />}
                     </div>
-                    
+                     */}
                     <br/>
 
                     <Button disabled={status} onClick={handleSubmit} variant='contained' >{isUploading == false ? 'Add Product' : 

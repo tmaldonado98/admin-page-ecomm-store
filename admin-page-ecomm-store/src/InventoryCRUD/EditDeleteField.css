@@ -4,18 +4,33 @@
 
 th {
     border-bottom: 5px double black;
+    background-color: rgb(189, 189, 189);
 }
 
 tr:nth-child(even) {
-    background-color: #bababab1;
+    /* background-color: #bababab1; */
+    background-color: rgba(176, 190, 137, 0.95);
+
 }
-tr:nth-child(even):hover {
+/* tr:nth-child(even):hover {
     background-color: #e3e3e3;
-}
+} */
 
 tr:nth-child(odd) {
-    background-color: #ecececb6;
+    /* background-color: #ecececb6; */
+    background-color: rgba(134, 160, 134, 0.95);
+
 }
-tr:nth-child(odd):hover {
-    background-color: #ececec;
+
+tr:hover {
+    background-color: #ecececf6;
+    /* color: ivory; */
+}
+
+td {
+    /* font-size: 18px; */
+}
+
+input {
+    font-style: inherit;
 }
