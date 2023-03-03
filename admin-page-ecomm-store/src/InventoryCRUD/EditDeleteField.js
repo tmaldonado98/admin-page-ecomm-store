@@ -11,6 +11,13 @@ const [editable, setEditable] = useState(true);
 
 const [editingRow, setEditingRow] = useState(null);
 
+const [stateEditObj, setStateEditObj] = useState({
+  name: '',
+  prodkey: '',
+});
+
+const [savedStatus, setSavedStatus] = useState(false)
+
   useEffect(()=> {
     Axios.get('http://localhost:3003/getRows')
     .then(result => setRows(result.data))
@@ -18,10 +25,21 @@ const [editingRow, setEditingRow] = useState(null);
     .then(console.log(rows))
     .catch(error => alert(error))
 
-  }, []);
+  }, [savedStatus]);
 
   function handleEdit (prodkey){
     setEditingRow(prodkey)
+
+    console.log(prodkey)
+    const theRow = rows.find(curIt => curIt.prodkey === prodkey)
+    console.log(theRow)
+      setStateEditObj({
+        name: theRow.name,
+        prodkey: theRow.prodkey,
+      })
+    
+
+    console.log(stateEditObj)
 
     // const itemToEdit = rows.find(curr => curr.prodkey === key);
     // console.log(itemToEdit)
@@ -33,8 +51,30 @@ const [editingRow, setEditingRow] = useState(null);
 
   function handleSave (){
     // setEditable(true)
-    setEditingRow(null)
-    alert('Your modifications have been saved.')
+
+    // setStateEditObj({
+    //   name: document.querySelector('input[name=name]').value,
+    //   prodkey: document.querySelector('input[name=prodkey]').value,
+
+    // });
+
+    // editObj = {
+      // name: document.querySelector('input[name=name]').value,
+      // name: stateEditObj.name,
+      // prodkey: stateEditObj.prodkey,
+      // prodkey: document.querySelector('input[name=prodkey]').value,
+
+    // }
+
+    let editObj = stateEditObj;
+
+    console.log(editObj)
+    // console.log(editObj)
+    Axios.post('http://localhost:3003/edit', editObj) 
+    .then(setEditingRow(null))
+    .then(alert('Your modifications have been saved.'))
+
+    setSavedStatus(!savedStatus)
   }
 
   function handleRemove() {
@@ -74,12 +114,14 @@ const [editingRow, setEditingRow] = useState(null);
                         {rows.map(item=> (
                             <tr key={item.prodkey}>
                                 <td>{item.id}</td>
-                                <td>{editingRow === item.prodkey ? (<input type='text' disabled={false} defaultValue={item.name} />) : (item.name)}</td>
+                                <td>{editingRow === item.prodkey ? (<input type='text' name='name' disabled={false} defaultValue={item.name} onChange={e => setStateEditObj({...stateEditObj, name: e.target.value})}/>) : (item.name)}</td>
                                 <td>{item.size}</td>
                                 <td>{item.medium}</td>
                                 <td>{item.price}</td>
                                 <td>{item.imgsrc}</td>
-                                <td>{item.prodkey}</td>
+                                <td>{editingRow === item.prodkey ? (<input type='text' name='prodkey' disabled={false} defaultValue={item.prodkey} onChange={e => setStateEditObj({...stateEditObj, prodkey: e.target.value})}/>) : (item.prodkey)}</td>
+
+                                {/* <td>{item.prodkey}</td> */}
                                 <td>{item.invtype}</td>
                                 <td> {editingRow === item.prodkey ? (<div>
                                   <Button onClick={handleSave}>Save</Button> <Button onClick={handleRemove}>Remove</Button></div>)
