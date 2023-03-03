@@ -11,6 +11,7 @@ import CircularProgress, {
 
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useState, useEffect } from 'react';
+import { display } from '@mui/system';
 
 function onlyNumbers(e){
     if (e.keyCode >= 65 && e.keyCode <= 90) {
@@ -116,9 +117,9 @@ export default function InsertField() {
             setKeyState('');
         })
             
-        .then((snapshot) => {
-            // console.log('File uploaded successfully with name: ' + keyState);           
-        })
+        // .then((snapshot) => {
+        //     // console.log('File uploaded successfully with name: ' + keyState);           
+        // })
         .then(() => {
             let inputObject = {};
             const input = document.getElementsByTagName("input");
@@ -136,6 +137,7 @@ export default function InsertField() {
                     // image: imageSource,
                     image: imageSrc,
                     prodkey: inputValues.prodkey,
+                    stripeInvData: inputValues.stripeInvData,
                     // name: (input['name'].value),
                     // size: (input['size'].value),
                     // medium: (input['medium'].value),
@@ -147,10 +149,10 @@ export default function InsertField() {
                 }
             }
 
-                // console.log(inputObject)
+                console.log(inputObject)
                 const dynObj = Object.keys(inputObject);
-                
-                Axios.post('http://localhost:3003/api/insert', inputObject, {headers: {'Content-Type': 'multipart/form-data'}})
+                // {headers: {'Content-Type': 'multipart/form-data'}}
+                Axios.post('http://localhost:3003/api/insert', inputObject)
                 .catch(error => alert(error), input.value = '')
 
                 // const img = document.getElementById('preview');
@@ -180,12 +182,20 @@ export default function InsertField() {
         price: '',
         img: '',
         prodkey: '',
+        stripeInvData: '',
       });
     
       const handleInputChange = (event) => {
         const { name, value } = event.target;
         setInputValues({ ...inputValues, [name]: value });
       };
+
+      const sendInfinite = () => {
+        setInputValues({ ...inputValues, stripeInvData: {type: 'infinite'} });
+      }
+      const sendFinite = () => {
+        setInputValues({ ...inputValues, stripeInvData: {type: 'finite', quantity: 1} });
+      }
     
       useEffect(() => {
         const validName = inputValues.name !== '';
@@ -195,8 +205,9 @@ export default function InsertField() {
         const validPrice = inputValues.price !== '';
         const validImg = inputValues.img !== '';
         const validProdkey = inputValues.prodkey !== '';
+        const validRadio = inputValues.stripeInvData !== '';
 
-        setStatus(validName && validSize && validMedium && validPrice && validImg && validProdkey ? false : true);
+        setStatus(validName && validSize && validMedium && validPrice && validImg && validProdkey && validRadio ? false : true);
       }, [inputValues]);
     
     //   function handleFileInput(){
@@ -218,6 +229,7 @@ export default function InsertField() {
             price: '',
             img: '',
             prodkey: '',
+            stripeInvData: '',
           });
           setStatus(true);
           document.querySelector('input[type=file]').value = '';
@@ -246,9 +258,18 @@ export default function InsertField() {
                     
                     <label for="prodkey">Write a product key in all lowercase or all uppercase. <br/> Recommended to assign one alphabetic integer per inventory item.<br/> For example: "one" for item 1, "two" for item 2, "three" for item 3, etc. </label>
                     <input required={true} value={inputValues.prodkey} onChange={handleInputChange} onKeyUp={handleKeyInput} name='prodkey' type="text"/>
-                    
+
                     <label for="img">Image File</label>
                     <input required={true} on onChange={getFileInfo} name='img' type="file" multiple="false" accept="image/*" />
+                    
+                    <div>
+                        <p>Set whether item has finite quantity or infinite</p>
+                        <label for="infinite">Infinite (print to order)</label>
+                        <input id='infinite' value={inputValues.stripeInvData} onChange={sendInfinite} name='stripeInvData' type="radio" required/>
+                        
+                        <label for="finite">Finite (selling original)</label>
+                        <input id='finite' value={inputValues.stripeInvData} onChange={sendFinite} name='stripeInvData' type="radio"/>
+                    </div>
 {/* 
                     <div id='img-preview'>
                         <p>Image Preview (size will be bigger on store page)</p>
@@ -260,7 +281,6 @@ export default function InsertField() {
                     <Button disabled={status} onClick={handleSubmit} variant='contained' >{isUploading == false ? 'Add Product' : 
 <>
                                     <CircularProgress/>
-                                    {/* </CircularProgress> */}
                                         <Typography variant="caption" component="div" color="text.secondary">
                                             Uploading...
                                         </Typography>

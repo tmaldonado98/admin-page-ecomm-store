@@ -15,7 +15,7 @@ const [editingRow, setEditingRow] = useState(null);
     Axios.get('http://localhost:3003/getRows')
     .then(result => setRows(result.data))
     // .then(result => console.log(result.data))
-    // .then(console.log(rows))
+    .then(console.log(rows))
     .catch(error => alert(error))
 
   }, []);
@@ -64,7 +64,7 @@ const [editingRow, setEditingRow] = useState(null);
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th><th>Name</th><th>Size</th><th>Medium</th><th>Price</th><th>Image Source</th><th>Unique Key</th><th>Edit/Delete</th>
+                        <th>ID</th><th>Name</th><th>Size</th><th>Medium</th><th>Price</th><th>Image Source</th><th>Unique Key</th><th>Inv. Type</th><th>Edit/Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,6 +80,7 @@ const [editingRow, setEditingRow] = useState(null);
                                 <td>{item.price}</td>
                                 <td>{item.imgsrc}</td>
                                 <td>{item.prodkey}</td>
+                                <td>{item.invtype}</td>
                                 <td> {editingRow === item.prodkey ? (<div>
                                   <Button onClick={handleSave}>Save</Button> <Button onClick={handleRemove}>Remove</Button></div>)
                                  
