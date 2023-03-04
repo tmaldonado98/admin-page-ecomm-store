@@ -191,10 +191,10 @@ export default function InsertField() {
       };
 
       const sendInfinite = () => {
-        setInputValues({ ...inputValues, stripeInvData: {type: 'infinite'} });
+        setInputValues({ ...inputValues, stripeInvData: {type: 'Print to order'} });
       }
       const sendFinite = () => {
-        setInputValues({ ...inputValues, stripeInvData: {type: 'finite', quantity: 1} });
+        setInputValues({ ...inputValues, stripeInvData: {type: 'Original', quantity: 1} });
       }
     
       useEffect(() => {
@@ -264,10 +264,10 @@ export default function InsertField() {
                     
                     <div>
                         <p>Set whether item has finite quantity or infinite</p>
-                        <label for="infinite">Infinite (print to order)</label>
+                        <label for="infinite">Print to order (infinite)</label>
                         <input id='infinite' value={inputValues.stripeInvData} onChange={sendInfinite} name='stripeInvData' type="radio" required/>
                         
-                        <label for="finite">Finite (selling original)</label>
+                        <label for="finite">Selling original (finite)</label>
                         <input id='finite' value={inputValues.stripeInvData} onChange={sendFinite} name='stripeInvData' type="radio"/>
                     </div>
 {/* 

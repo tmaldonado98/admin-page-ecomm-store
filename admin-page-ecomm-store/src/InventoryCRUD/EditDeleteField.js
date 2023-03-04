@@ -22,7 +22,7 @@ const [savedStatus, setSavedStatus] = useState(false)
     Axios.get('http://localhost:3003/getRows')
     .then(result => setRows(result.data))
     // .then(result => console.log(result.data))
-    .then(console.log(rows))
+    // .then(console.log(rows))
     .catch(error => alert(error))
 
   }, [savedStatus]);
@@ -30,46 +30,25 @@ const [savedStatus, setSavedStatus] = useState(false)
   function handleEdit (prodkey){
     setEditingRow(prodkey)
 
-    console.log(prodkey)
+    // console.log(prodkey)
     const theRow = rows.find(curIt => curIt.prodkey === prodkey)
-    console.log(theRow)
+    // console.log(theRow)
       setStateEditObj({
         name: theRow.name,
         prodkey: theRow.prodkey,
       })
     
 
-    console.log(stateEditObj)
+    // console.log(stateEditObj)
 
-    // const itemToEdit = rows.find(curr => curr.prodkey === key);
-    // console.log(itemToEdit)
-    // if (itemToEdit) {
-        
-    // }
-    // setEditable(false)  
   }
 
   function handleSave (){
-    // setEditable(true)
-
-    // setStateEditObj({
-    //   name: document.querySelector('input[name=name]').value,
-    //   prodkey: document.querySelector('input[name=prodkey]').value,
-
-    // });
-
-    // editObj = {
-      // name: document.querySelector('input[name=name]').value,
-      // name: stateEditObj.name,
-      // prodkey: stateEditObj.prodkey,
-      // prodkey: document.querySelector('input[name=prodkey]').value,
-
-    // }
 
     let editObj = stateEditObj;
 
     console.log(editObj)
-    // console.log(editObj)
+
     Axios.post('http://localhost:3003/edit', editObj) 
     .then(setEditingRow(null))
     .then(alert('Your modifications have been saved.'))
