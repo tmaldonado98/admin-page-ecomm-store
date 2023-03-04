@@ -7,30 +7,22 @@ const app = express();
 const cors = require('cors');
 const mysql = require('mysql2');
 const multer = require('multer');
-const stripe = require('stripe')('sk_test_51MhLs5CfuO4W4Jw2ml94H0k1sORDPTMuu9ZCGrVyiaooImu09NUqwvXKrb1zBTGRLsorJydTocNpbfeTcQjYZgd0000p4t7qil');
-
-// const Stripe = require('stripe');
-// const stripe = Stripe(process.env.STRIPE_PRIVATE_KEY);
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
 // console.log(process.env.STRIPE_PRIVATE_KEY);
-
-// const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
-
-// console.log(stripe);
-
-// const host = process.env.DB_HOST;
-// const user = process.env.DB_USER;
-// const password = process.env.DB_PASSWORD;
-// const database = process.env.DB_NAME;
+const host = process.env.DB_HOST;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASSWORD;
+const database = process.env.DB_NAME;
 // console.log(process.env.DB_HOST);
 // console.log(process.env.DB_USER);
 // console.log(database);
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'singapore123',
-    database: 'veacollections',
+    host: host,
+    user: user,
+    password: password,
+    database: database,
     port: '3306'
 })
 // console.log(process.env)
@@ -134,31 +126,33 @@ app.post('/edit', (req, response) => {
 
     const reference = req.body;
     // const skipDynObj = Object.values(reference)
-    console.log(reference);
+    // console.log(reference);
     // console.log(skipDynObj)
     const name = reference.name; 
-    // const size = skipDynObj[0].size;  
-    // const image = skipDynObj[0].image;
+    const size = reference.size;  
+    const image = reference.image;
 
-    // const medium = skipDynObj[0].medium;  
-    // const price = skipDynObj[0].price;  
+    const medium = reference.medium;  
+    const price = Number(reference.price); 
+    // console.log(price) 
     const prodkey = reference.prodkey.toString();  
 
-    // const stripeInvData = skipDynObj[0].stripeInvData;  
-    // const stripeInvDataForMysql = stripeInvData.type;
+    
+    // const stripeInvData = reference.stripeInvData;  
+    const stripeInvData = reference.invtype;  
 
-    // name, size, medium, price, prodkey, invtype
-
-    // const edit = `UPDATE inventory SET name = ?, size = ?, medium = ?, price = ?, prodkey = ?, invtype = ?  WHERE prodkey = ${prodkey}`
-    // db.query(edit, [name, size, medium, price, prodkey, stripeInvDataForMysql], (err, resu) => {
-    //     if (err) {console.log(err)}
-    //     console.log(resu);
-    // })
-    const edit = 'UPDATE inventory SET name = ? WHERE prodkey = ?'
-    db.query(edit, [name, prodkey], (err, resu) => {
+    console.log(stripeInvData)
+       
+    const edit = `UPDATE inventory SET name = ?, size = ?, medium = ?, price = ?, prodkey = ?, invtype = ?  WHERE prodkey = ?`
+    db.query(edit, [name, size, medium, price, prodkey, stripeInvData, prodkey], (err, resu) => {
         if (err) {console.log(err)}
         console.log(resu);
     })
+    // const edit = 'UPDATE inventory SET name = ? WHERE prodkey = ?'
+    // db.query(edit, [name, prodkey], (err, resu) => {
+    //     if (err) {console.log(err)}
+    //     console.log(resu);
+    // })
 
 
 })

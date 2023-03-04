@@ -13,7 +13,11 @@ const [editingRow, setEditingRow] = useState(null);
 
 const [stateEditObj, setStateEditObj] = useState({
   name: '',
+  size: '',
+  medium: '',
+  price: '',
   prodkey: '',
+  invtype: null,
 });
 
 const [savedStatus, setSavedStatus] = useState(false)
@@ -32,10 +36,15 @@ const [savedStatus, setSavedStatus] = useState(false)
 
     // console.log(prodkey)
     const theRow = rows.find(curIt => curIt.prodkey === prodkey)
-    // console.log(theRow)
+    console.log(theRow)
       setStateEditObj({
         name: theRow.name,
+        size: theRow.size,
+        medium: theRow.medium,
+        price: theRow.price,
         prodkey: theRow.prodkey,
+        invtype: theRow.invtype,
+
       })
     
 
@@ -74,7 +83,7 @@ const [savedStatus, setSavedStatus] = useState(false)
         p: 2,
         display: 'flex',
         flexDirection: 'column',
-        height: 350,
+        height: 'auto',
         backgroundColor: 'darkred',
       }}
     >
@@ -94,14 +103,36 @@ const [savedStatus, setSavedStatus] = useState(false)
                             <tr key={item.prodkey}>
                                 <td>{item.id}</td>
                                 <td>{editingRow === item.prodkey ? (<input type='text' name='name' disabled={false} defaultValue={item.name} onChange={e => setStateEditObj({...stateEditObj, name: e.target.value})}/>) : (item.name)}</td>
-                                <td>{item.size}</td>
-                                <td>{item.medium}</td>
-                                <td>{item.price}</td>
+                                {/* <td>{item.size}</td>  */}
+                                <td>{editingRow === item.prodkey ? (<input type='text' name='size' disabled={false} defaultValue={item.size} onChange={e => setStateEditObj({...stateEditObj, size: e.target.value})}/>) : (item.size)}</td>
+                                {/* <td>{item.medium}</td> */}
+                                <td>{editingRow === item.prodkey ? (<input type='text' name='medium' disabled={false} defaultValue={item.medium} onChange={e => setStateEditObj({...stateEditObj, medium: e.target.value})}/>) : (item.medium)}</td>
+                                {/* <td>{item.price}</td> */}
+                                <td>{editingRow === item.prodkey ? (<input type='text' inputMode='numeric' name='price' disabled={false} defaultValue={item.price} onChange={e => setStateEditObj({...stateEditObj, price: e.target.value})}/>) : (item.price)}</td>
                                 <td>{item.imgsrc}</td>
                                 <td>{editingRow === item.prodkey ? (<input type='text' name='prodkey' disabled={false} defaultValue={item.prodkey} onChange={e => setStateEditObj({...stateEditObj, prodkey: e.target.value})}/>) : (item.prodkey)}</td>
 
                                 {/* <td>{item.prodkey}</td> */}
-                                <td>{item.invtype}</td>
+                                {/* <td>{item.invtype}</td> */}
+                                <td>{editingRow === item.prodkey ? (<div>
+                                    <label for="infinite">Print to order (infinite)</label>
+                                    <input id='infinite'  onClick={e => setStateEditObj({...stateEditObj, invtype: 'Print to order'})} name='stripeInvData' type="radio"/>
+                                    <label for="finite">Original (finite)</label>
+                                    <input id='finite' onClick={e => setStateEditObj({...stateEditObj, invtype: 'Original'})} name='stripeInvData' type="radio"/>                                    
+                                  </div>
+                                ) : (item.invtype)}</td>
+                                
+{/*                                 
+                                <input type='text' name='invtype' disabled={false} defaultValue={item.prodkey} onChange={e => setStateEditObj({...stateEditObj, prodkey: e.target.value})}/>
+
+
+
+                                <label for="infinite">Print to order (infinite)</label>
+                        <input id='infinite' value={inputValues.stripeInvData} onChange={sendInfinite} name='stripeInvData' type="radio" required/>
+                        
+                        <label for="finite">Selling original (finite)</label>
+                        <input id='finite' value={inputValues.stripeInvData} onChange={sendFinite} name='stripeInvData' type="radio"/> */}
+
                                 <td> {editingRow === item.prodkey ? (<div>
                                   <Button onClick={handleSave}>Save</Button> <Button onClick={handleRemove}>Remove</Button></div>)
                                  
