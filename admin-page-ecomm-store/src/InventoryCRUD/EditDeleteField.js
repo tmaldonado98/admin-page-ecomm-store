@@ -65,16 +65,29 @@ const [savedStatus, setSavedStatus] = useState(false)
     setSavedStatus(!savedStatus)
   }
 
-  function handleRemove() {
-    const confirm = window.confirm('Are you sure?')
-    
-    //define sql statement
-    // define db query
-    
+  // const handleRemove = (prodkey) => {
+  //       const confirm = window.confirm('Are you sure?'); 
+   
+  //   if(confirm){
+  //     Axios.post('http://localhost:3003/edit', prodkey) 
+  //     .then(alert('Your item has been removed from the store inventory.'))
+  //     .catch(error => alert(error))
+  //   }
+  //   setSavedStatus(!savedStatus)
+  // }
+  // const confirm = window.confirm('Are you sure?'); 
+
+  function handleRemove(prodkey) {
+   
+    const key = prodkey;
+    const confirm = window.confirm('Are you sure?'); 
     if(confirm){
-      //db query
-      alert('Your item has been removed from the store inventory.')
+      Axios.post('http://localhost:3003/deleteRow', key) 
+      .then(setSavedStatus(!savedStatus))
+      .then(alert('Your item has been removed from the store inventory.'))
+      .catch(error => alert(error))
     }
+
   }
 
   return(
@@ -134,10 +147,10 @@ const [savedStatus, setSavedStatus] = useState(false)
                         <input id='finite' value={inputValues.stripeInvData} onChange={sendFinite} name='stripeInvData' type="radio"/> */}
 
                                 <td> {editingRow === item.prodkey ? (<div>
-                                  <Button onClick={handleSave}>Save</Button> <Button onClick={handleRemove}>Remove</Button></div>)
+                                  <Button onClick={handleSave}>Save</Button> <Button onClick={() => handleRemove(item.prodkey)}>Remove</Button></div>)
                                  
                                 : 
-                                <div>{<Button onClick={()=> handleEdit(item.prodkey)}>Edit</Button>} <Button onClick={handleRemove}>Remove</Button></div>}
+                                <div>{<Button onClick={()=> handleEdit(item.prodkey)}>Edit</Button>} <Button onClick={() => handleRemove(item.prodkey)}>Remove</Button></div>}
                                 </td>
                             </tr>
                         ))}

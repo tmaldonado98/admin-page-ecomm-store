@@ -37,8 +37,8 @@ app.post('/api/insert', async (req, res) => {
 
     const reference = req.body;
     const skipDynObj = Object.values(reference)
-    console.log(reference);
-    console.log(skipDynObj)
+    // console.log(reference);
+    // console.log(skipDynObj)
     const name = skipDynObj[0].name; 
     const size = skipDynObj[0].size;  
     const image = skipDynObj[0].image;
@@ -116,18 +116,18 @@ app.get('/getRows', (request, response) => {
     const select = 'SELECT * FROM inventory';
     db.query(select, (err, resu) => {
         if (err) {console.log(err)}
-        console.log(resu);
+        // console.log(resu);
         response.json(resu);
 
     })
 })
 
-app.post('/edit', (req, response) => {
 
+////NEED TO ADD UPDATE QUERY FOR STRIPE API
+app.post('/edit', (req, response) => {
+    
     const reference = req.body;
-    // const skipDynObj = Object.values(reference)
-    // console.log(reference);
-    // console.log(skipDynObj)
+
     const name = reference.name; 
     const size = reference.size;  
     const image = reference.image;
@@ -137,8 +137,6 @@ app.post('/edit', (req, response) => {
     // console.log(price) 
     const prodkey = reference.prodkey.toString();  
 
-    
-    // const stripeInvData = reference.stripeInvData;  
     const stripeInvData = reference.invtype;  
 
     console.log(stripeInvData)
@@ -148,14 +146,23 @@ app.post('/edit', (req, response) => {
         if (err) {console.log(err)}
         console.log(resu);
     })
-    // const edit = 'UPDATE inventory SET name = ? WHERE prodkey = ?'
-    // db.query(edit, [name, prodkey], (err, resu) => {
-    //     if (err) {console.log(err)}
-    //     console.log(resu);
-    // })
+})
 
+
+///NEED TO ADD DELETE QUERY FOR STRIPE API
+app.post('/deleteRow', (requ, respo) => {
+
+    const prodkey = Object.keys(requ.body)
+    // console.log(prodkey)
+
+    const deleteRow = `DELETE FROM inventory WHERE prodkey = ?`;
+    db.query(deleteRow, [prodkey], (err, respo) => {
+        if (err) {console.log(err)}
+        console.log(respo);
+    })
 
 })
+
 
 const port = 3003;
 
