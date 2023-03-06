@@ -32,6 +32,8 @@ app.use(bodyparser.urlencoded({extended: true}))
 
 // const upload =  multer({storage: multer.memoryStorage()});   upload.single("img"),
 
+let productsWPrices = {}
+
 // async
 app.post('/api/insert', async (req, res) => {
 
@@ -51,26 +53,57 @@ app.post('/api/insert', async (req, res) => {
 
     const stripeInvDataForMysql = stripeInvData.type;
 
+    async function createProductAndPrice() {
+    const newProduct = await stripe.products.create({
+            name: name,
+            description: 'The product key you provided is: ' + prodkey,
+            type: 'good',
+            images: [image],
+            metadata: {
+                prodkey: prodkey
+            },
+            // default_price_data: {
+            //     currency: 'usd',
+            //     unit_amount: price * 100
+            // },
+        })
+
+        // let dynamicObj = newProduct.metadata.prodkey;
+        // productsWPrices[newProduct.id]
+        
+        // const nProdName = newProduct.name;
+        // const nProdId = newProduct.id;
+        // console.log(newProduct.name)
+
+        const newPrice = await stripe.prices.create({
+            product: newProduct.id,
+            unit_amount: price * 100,
+            currency: 'usd',
+        })
+
+        const stripeProducts = await stripe.products.list();
+        console.log(stripeProducts)
+        // .then(productsWPrices[dynamicObj][nProdName, nProdId])
+        // then(products)
+        // .then(console.log(productsWPrices))
+        // .then(productsWPrices.nProdName.nPr`odId)
+        // .then(console.log(productsWPrices))`
+    }
 
     const insert = 'INSERT INTO inventory (name, size, medium, price, imgsrc, prodkey, invtype) VALUES (?, ?, ?, ?, ?, ?, ?)';
     db.query(insert, [name, size, medium, price, image, prodkey, stripeInvDataForMysql], (err, result) => {
-        if (err) {console.log(err)}
-        console.log(result);
+        if (err) {
+            console.log(err)
+        } else {
+            console.log(result);
+            createProductAndPrice();
+        }
     })
 
 
-    const newProduct = await stripe.products.create({
-        name: name,
-        description: 'The product key you provided is: ' + prodkey,
-        type: 'good',
-        images: [image],
-    })
+ 
 
-    const newPrice = await stripe.prices.create({
-        product: newProduct.id,
-        unit_amount: price * 100,
-        currency: 'usd',
-    })
+
     // .then(
     //     stripe.skus.create({
     //         // name: name,
@@ -124,7 +157,7 @@ app.get('/getRows', (request, response) => {
 
 
 ////NEED TO ADD UPDATE QUERY FOR STRIPE API
-app.post('/edit', (req, response) => {
+app.post('/edit', async (req, response) => {
     
     const reference = req.body;
 
@@ -146,8 +179,82 @@ app.post('/edit', (req, response) => {
         if (err) {console.log(err)}
         console.log(resu);
     })
-})
 
+    ///UPDATE PRODUCT + PRICE TO REFLECT ADMIN TABLE EDIT
+
+    let productId = '';
+
+    await stripe.products.list()
+    .then(item => {
+        const productToUpd = item.data.find(prod => prod.metadata.prodkey === prodkey)
+        productId = productToUpd.id;
+        console.log(productId);
+
+        if (productToUpd) {
+                const updateProd = stripe.products.update(
+                productToUpd.id,
+                    {
+                        name: name,
+                        description: 'The product key you provided is: ' + prodkey,
+                        // default_price_data: {currency: 'usd', unit_amount: price * 100},
+                        metadata: {prodkey: prodkey},
+                    }
+                )
+            console.log(updateProd)
+        }
+    
+    })
+    .catch(error => console.log(error))
+
+
+    stripe.prices.create({
+        unit_amount: price * 100,
+        currency: 'usd',
+        product: productId,
+        active: true
+    })
+
+    stripe.prices.list()
+    .then(curIt => {
+        // console.log(curIt);
+        const priceToUpd = curIt.data.find(price => price.product === productId)
+        console.log(priceToUpd);
+    
+        // const price = stripe.prices.retrieve(
+        //     priceToUpd.id
+           
+        //   )
+        
+
+        // if (priceToUpd) {
+                const updatePrice = stripe.prices.update(
+                    priceToUpd.id,
+                    {
+                        active: false
+                    }
+                )
+            // console.log(updatePrice)
+        // }
+    
+    })
+
+    .catch(error => console.log(error))
+
+
+
+    // const priceToUpd = stripe.prices.find(item => item.metadata.prodkey === prodkey)
+    // console.log(priceToUpd);
+    // const updatePrice = await stripe.prices.update(
+    //     priceToUpd.id,
+    //     {unit_amount: price * 100}
+    //   );
+    // console.log(updatePrice)
+
+})
+// stripe.products.list()
+// stripe.prices.list()
+
+// stripe.prices.list().then(result => console.log(resul    t));
 
 ///NEED TO ADD DELETE QUERY FOR STRIPE API
 app.post('/deleteRow', (requ, respo) => {

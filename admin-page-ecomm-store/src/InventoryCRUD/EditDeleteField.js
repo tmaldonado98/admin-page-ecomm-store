@@ -121,7 +121,7 @@ const [savedStatus, setSavedStatus] = useState(false)
                                 {/* <td>{item.medium}</td> */}
                                 <td>{editingRow === item.prodkey ? (<input type='text' name='medium' disabled={false} defaultValue={item.medium} onChange={e => setStateEditObj({...stateEditObj, medium: e.target.value})}/>) : (item.medium)}</td>
                                 {/* <td>{item.price}</td> */}
-                                <td>{editingRow === item.prodkey ? (<input type='text' inputMode='numeric' name='price' disabled={false} defaultValue={item.price} onChange={e => setStateEditObj({...stateEditObj, price: e.target.value})}/>) : (item.price)}</td>
+                                <td>{editingRow === item.prodkey ? (<input type='text' inputMode='numeric' name='price' disabled={false} defaultValue={item.price} onChange={e => setStateEditObj({...stateEditObj, price: e.target.value})}/>) : ('$' + item.price + ' USD')}</td>
                                 <td>{item.imgsrc}</td>
                                 <td>{editingRow === item.prodkey ? (<input type='text' name='prodkey' disabled={false} defaultValue={item.prodkey} onChange={e => setStateEditObj({...stateEditObj, prodkey: e.target.value})}/>) : (item.prodkey)}</td>
 
