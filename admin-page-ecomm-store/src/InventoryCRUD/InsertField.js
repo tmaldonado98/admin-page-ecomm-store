@@ -1,3 +1,5 @@
+// import dotenv from 'dotenv';
+// dotenv.config();
 import { Button } from '@mui/material';
 import './InsertField.css';
 import Axios from 'axios';
@@ -12,7 +14,7 @@ import CircularProgress, {
   import { useState, useEffect } from 'react';
   import { display } from '@mui/system';
   import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-  require('dotenv').config();
+//   require('dotenv').config();
 
 function onlyNumbers(e){
     if (e.keyCode >= 65 && e.keyCode <= 90) {
@@ -23,14 +25,13 @@ function onlyNumbers(e){
 
 const firebaseConfig = {
    // your Firebase app configuration object
-//    apiKey: "AIzaSyAg98s9T7TSlWTywldvgiFqUGlMZlcwy-U",
    apiKey: process.env.API_KEY ,
-   authDomain: "vea-collections.firebaseapp.com",
-   projectId: "vea-collections",
-   storageBucket: "vea-collections.appspot.com",
-   messagingSenderId: "616842123391",
-   appId: "1:616842123391:web:60cbf95825eb5554b6074a",
-   measurementId: "G-S37FFT9HJ3"
+   authDomain: process.env.AUTH_DOMAIN,
+   projectId: process.env.PROJECT_ID,
+   storageBucket: "vea-collections.appspot.com", //process.env.STORAGE_BUCKET,
+   messagingSenderId: process.env.MESSAGING_SENDER_ID,
+   appId: process.env.APP_ID,
+   measurementId: process.env.MEASUREMENT_ID
  };
 const firebaseApp = initializeApp(firebaseConfig);
 
