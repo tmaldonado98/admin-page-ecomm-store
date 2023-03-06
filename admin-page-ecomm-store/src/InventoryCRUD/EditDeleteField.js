@@ -90,17 +90,21 @@ const [savedStatus, setSavedStatus] = useState(false)
 
   }
 
+  function refreshRows(){
+    setSavedStatus(!savedStatus)
+  }
+
   return(
     <Paper
-      sx={{
-        p: 2,
-        display: 'flex',
+    sx={{
+      p: 2,
+      display: 'flex',
         flexDirection: 'column',
         height: 'auto',
         backgroundColor: 'darkred',
       }}
-    >
-
+      >
+      <Button onClick={refreshRows}>Refresh Rows</Button>
         {console.log(rows)}
             <table>
                 <thead>

@@ -4,14 +4,15 @@ import Axios from 'axios';
 import { initializeApp } from 'firebase/app';
 import CircularProgress, {
     CircularProgressProps,
-  } from '@mui/material/CircularProgress';
+} from '@mui/material/CircularProgress';
   import Typography from '@mui/material/Typography';
   import Box from '@mui/material/Box';
   import Dialog from '@mui/material/Dialog';
-
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useState, useEffect } from 'react';
-import { display } from '@mui/system';
+  
+  import { useState, useEffect } from 'react';
+  import { display } from '@mui/system';
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+  require('dotenv').config();
 
 function onlyNumbers(e){
     if (e.keyCode >= 65 && e.keyCode <= 90) {
@@ -22,7 +23,8 @@ function onlyNumbers(e){
 
 const firebaseConfig = {
    // your Firebase app configuration object
-   apiKey: "AIzaSyAg98s9T7TSlWTywldvgiFqUGlMZlcwy-U",
+//    apiKey: "AIzaSyAg98s9T7TSlWTywldvgiFqUGlMZlcwy-U",
+   apiKey: process.env.API_KEY ,
    authDomain: "vea-collections.firebaseapp.com",
    projectId: "vea-collections",
    storageBucket: "vea-collections.appspot.com",
