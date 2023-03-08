@@ -1,4 +1,5 @@
 import * as React from 'react';
+// import Stripe from 'stripe';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -28,8 +29,10 @@ import Nav from '../Nav';
 import Axios from 'axios';
 import {useState, useEffect} from 'react';
 // import { Buffer } from "buffer";
+// require('dotenv').config();
+// const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
-
+// const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
 
 
 function Copyright(props) {
@@ -99,17 +102,27 @@ function DashboardContent() {
     setOpen(!open);
   };
 
-  // const [rows, setRows] = useState(null);
+  const [balance, setBalance] = useState(null);
 
-  // useEffect(()=> {
-  //   Axios.get('http://localhost:3003/getRows')
-  //   .then(result => setRows(result.data))
-  //   // .then(result => console.log(result.data))
-  //   // .then(console.log(rows))
-  //   .catch(error => alert(error))
+  // useEffect(() => {
+  //   async function fetchBalance() {
+  //     const balance = stripe.balance.retrieve()
+  //     setBalance(balance)
+  //   }
 
-  // }, []);
-  
+  //   fetchBalance();
+  // }, [])
+
+  useEffect(()=> {
+    Axios.get('http://localhost:3003/getBalance')
+    .then(response => setBalance(response.data))
+    .then(response => console.log(response))
+    .then(console.log(balance))
+    // .then(result => console.log(result.data))
+    .catch(error => alert(error))
+
+  }, []);
+
   return (
     <ThemeProvider theme={mdTheme}>
 
@@ -142,6 +155,10 @@ function DashboardContent() {
                     height: 350,
                   }}
                 >
+                  <div>
+                    {balance ? 'state goes here' : <p>Loading...</p>}
+                    {console.log(balance)}
+                  </div>
                   {/* {console.log(rows)}
                   <div>
                       {rows ? ( 

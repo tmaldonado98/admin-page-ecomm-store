@@ -163,6 +163,16 @@ export default function InsertField() {
 
                 alert('Your item has been added to your inventory!')
         })
+        .then(setInputValues({
+            name: '',
+            size: '',
+            medium: '',
+            price: '',
+            img: '',
+            prodkey: '',
+            stripeInvData: null,
+          })
+          )
         .catch((error) => {
            alert('Error uploading file', error);
         })
@@ -208,7 +218,7 @@ export default function InsertField() {
         const validPrice = inputValues.price !== '';
         const validImg = inputValues.img !== '';
         const validProdkey = inputValues.prodkey !== '';
-        const validRadio = inputValues.stripeInvData !== '';
+        const validRadio = inputValues.stripeInvData !== null;
 
         setStatus(validName && validSize && validMedium && validPrice && validImg && validProdkey && validRadio ? false : true);
       }, [inputValues]);
@@ -225,15 +235,15 @@ export default function InsertField() {
     
     function handleSubmit (){
         insert();
-        setInputValues({
-            name: '',
-            size: '',
-            medium: '',
-            price: '',
-            img: '',
-            prodkey: '',
-            stripeInvData: null,
-          });
+        // setInputValues({
+        //     name: '',
+        //     size: '',
+        //     medium: '',
+        //     price: '',
+        //     img: '',
+        //     prodkey: '',
+        //     stripeInvData: undefined,
+        //   });
           setStatus(true);
           document.querySelector('input[type=file]').value = '';
           imageSrc = null;
@@ -268,10 +278,10 @@ export default function InsertField() {
                     <div>
                         <p>Set whether item has finite quantity or infinite</p>
                         <label for="infinite">Print to order (infinite)</label>
-                        <input id='infinite' value={inputValues.stripeInvData} onChange={sendInfinite} name='stripeInvData' type="radio" required/>
+                        <input id='infinite' value={inputValues.stripeInvData} onClick={sendInfinite} name='stripeInvData' type="radio"/>
                         
                         <label for="finite">Selling original (finite)</label>
-                        <input id='finite' value={inputValues.stripeInvData} onChange={sendFinite} name='stripeInvData' type="radio"/>
+                        <input id='finite' value={inputValues.stripeInvData} onClick={sendFinite} name='stripeInvData' type="radio"/>
                     </div>
 {/* 
                     <div id='img-preview'>

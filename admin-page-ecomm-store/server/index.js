@@ -199,7 +199,6 @@ app.post('/deleteRow', (requ, respo) => {
         } else {
             console.log(respo);
             deleteProdAndPrice();
-            deleteImageFB();
         }    
     })
 
@@ -235,9 +234,19 @@ app.post('/deleteRow', (requ, respo) => {
 
     }
 
-    function deleteImageFB(){
-        
-    }
+})
+
+// //Axios request for displaying Stripe Balance on Order Registry
+app.get('/getBalance', async (request, response) => {
+    // const balance = await stripe.balance.retrieve()
+    const balanceTransactions = await stripe.balanceTransactions.list()
+    
+    response = balanceTransactions
+    console.log(balanceTransactions.data)
+    // .then(response.json())
+    // .then(console.log(response))
+    // .catch(error => console.log(error))
+
 
 })
 
