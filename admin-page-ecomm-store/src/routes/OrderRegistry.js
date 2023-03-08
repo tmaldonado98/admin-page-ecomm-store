@@ -1,5 +1,5 @@
 import * as React from 'react';
-// import Stripe from 'stripe';
+import './OrderRegistry.css';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -29,59 +29,12 @@ import Nav from '../Nav';
 import Axios from 'axios';
 import {useState, useEffect} from 'react';
 
-// import { config } from "dotenv";
-// config();
-
-// import { Buffer } from "buffer";
-//(process.env.STRIPE_PRIVATE_KEY);
-
-// // const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
-
-// const stripePK = process.env.REACT_APP_STRIPE_PRIVATE_KEY;
-
-// const stripePromise = loadStripe(stripePK);
-
-// function MyComponent() {
-//   const stripe = useStripe();
-//   const [transactions, setTransactions] = useState([]);
-  
-//   useEffect(() => {
-//     async function fetchTransactions() {
-//       const response = await fetch("/api/transactions");
-//       const data = await response.json();
-//       setTransactions(data);
-//     }
-    
-//     fetchTransactions();
-//   }, []);
-  
-//   return (
-//     <div>
-//       <h1>My Stripe Transactions</h1>
-//       <ul>
-//         {transactions.map((transaction) => (
-//           <li key={transaction.id}>
-//             <strong>Amount:</strong> ${transaction.amount / 100}<br />
-//             <strong>Description:</strong> {transaction.description}<br />
-//             <strong>Date:</strong> {new Date(transaction.created * 1000).toLocaleString()}<br />
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-
-// function StripeContainer() {
-//   return (
-//     <Stripe stripe={stripePromise}>
-//       <Elements>
-//         <MyComponent />
-//       </Elements>
-//     </Stripe>
-//   );
-// }
-
+import Title from './Title';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 
 function Copyright(props) {
@@ -164,12 +117,17 @@ function DashboardContent() {
     })
     .then(response => console.log(response.data.data))
 
-      .then(console.log(transactions))
+      // .then(console.log(transactions))
       .catch(error => {
         console.log(error);
       });
   }, []);
   
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp * 1000);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  };
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -190,19 +148,58 @@ function DashboardContent() {
               }}
         >
               <Nav/>
-          {/* <Toolbar /> */}
+
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              {/* Chart */}
+
               <Grid item xs={12} md={8} lg={9}>
                 <Paper
                   sx={{
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 350,
+                    height: 'fit-content',
+                    width: '100%',
                   }}
                 >
+{transactions ? 
+(
+<>
+  
+                  <Title>Recent Orders</Title>
+                  <Table size="medium" display='unset' width='auto'>
+                    <TableHead>
+                      <TableRow maxWidth='inherit'>
+                        <TableCell>Date</TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Ship To</TableCell>
+                        <TableCell>Payment Method</TableCell>
+                        <TableCell align="right">Sale Amount</TableCell>
+                        <TableCell align="center">Contact</TableCell>
+                        <TableCell align="center">Receipt</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {transactions.map(each => (
+                        <TableRow maxWidth='inherit' key={each.id}>
+                          <TableCell>{formatDate(each.created)}</TableCell>
+                          <TableCell>{each.billing_details.name}</TableCell>
+                          <TableCell>{each.billing_details.address.city}, {each.billing_details.address.country} {each.billing_details.address.postal_code}</TableCell>
+                          <TableCell>{each.payment_method_details.card.brand} {'•••• '+each.payment_method_details.card.last4}</TableCell>
+                          <TableCell align="right">{`$${each.amount / 100}`}</TableCell>
+                          <TableCell>{each.billing_details.email}</TableCell>
+                          <TableCell maxWidth='20px'>{each.receipt_url}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  
+</>
+  )
+                      : <p>Loading...</p>
+                      }
+
+
                   <div>
   
                       {transactions ? transactions.map(each => (
@@ -214,19 +211,6 @@ function DashboardContent() {
 
                   </div>
 
-
-                  {/* {console.log(rows)}
-                  <div>
-                      {rows ? ( 
-                    <ul>
-
-                    {rows.map(item=> (
-                          <li key={item.prodkey}>{item.name}{item.medium}{item.size}{item.price}{(item.imgsrc.data.toString('base64'))}</li>
-                    ))}
-                    </ul>)
-                     : ('Loading...')
-                    }
-                  </div> */}
                   {/* <Chart /> */}
                 </Paper>
               </Grid>
@@ -240,7 +224,15 @@ function DashboardContent() {
                     height: 240,
                   }}
                 >
-                  <Deposits />
+                  <Typography variant="body2" color="text.secondary" align="center" fontSize={'16px'}>
+  
+                    To view more information about your Stripe account balance, orders,
+                    and payout status, log in to your Stripe account Dashboard at: <br/><br/>
+                    <a href='https://dashboard.stripe.com/dashboard' target='_blank'> https://dashboard.stripe.com/dashboard </a>
+                    
+                    
+  
+                  </Typography>
                 </Paper>
               </Grid>
               {/* Recent Orders */}
