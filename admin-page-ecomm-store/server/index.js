@@ -236,18 +236,14 @@ app.post('/deleteRow', (requ, respo) => {
 
 })
 
-// //Axios request for displaying Stripe Balance on Order Registry
 app.get('/getBalance', async (request, response) => {
-    // const balance = await stripe.balance.retrieve()
-    const balanceTransactions = await stripe.balanceTransactions.list()
-    
-    response = balanceTransactions
-    console.log(balanceTransactions.data)
-    // .then(response.json())
-    // .then(console.log(response))
-    // .catch(error => console.log(error))
 
+    const charges = await stripe.charges.list({
+        limit: 3,
+      })
+    // .then(console.log(response.data))
 
+    response.json(charges)
 })
 
 

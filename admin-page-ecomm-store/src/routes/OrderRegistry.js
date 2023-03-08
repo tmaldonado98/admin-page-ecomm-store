@@ -28,11 +28,60 @@ import {Link} from 'react-router-dom';
 import Nav from '../Nav';
 import Axios from 'axios';
 import {useState, useEffect} from 'react';
-// import { Buffer } from "buffer";
-// require('dotenv').config();
-// const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
-// const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
+// import { config } from "dotenv";
+// config();
+
+// import { Buffer } from "buffer";
+//(process.env.STRIPE_PRIVATE_KEY);
+
+// // const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
+
+// const stripePK = process.env.REACT_APP_STRIPE_PRIVATE_KEY;
+
+// const stripePromise = loadStripe(stripePK);
+
+// function MyComponent() {
+//   const stripe = useStripe();
+//   const [transactions, setTransactions] = useState([]);
+  
+//   useEffect(() => {
+//     async function fetchTransactions() {
+//       const response = await fetch("/api/transactions");
+//       const data = await response.json();
+//       setTransactions(data);
+//     }
+    
+//     fetchTransactions();
+//   }, []);
+  
+//   return (
+//     <div>
+//       <h1>My Stripe Transactions</h1>
+//       <ul>
+//         {transactions.map((transaction) => (
+//           <li key={transaction.id}>
+//             <strong>Amount:</strong> ${transaction.amount / 100}<br />
+//             <strong>Description:</strong> {transaction.description}<br />
+//             <strong>Date:</strong> {new Date(transaction.created * 1000).toLocaleString()}<br />
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
+
+
+// function StripeContainer() {
+//   return (
+//     <Stripe stripe={stripePromise}>
+//       <Elements>
+//         <MyComponent />
+//       </Elements>
+//     </Stripe>
+//   );
+// }
+
 
 
 function Copyright(props) {
@@ -96,32 +145,31 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
+
+
+
+//exp def
 function DashboardContent() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  const [balance, setBalance] = useState(null);
+  const [transactions, setTransactions] = useState([]);
 
-  // useEffect(() => {
-  //   async function fetchBalance() {
-  //     const balance = stripe.balance.retrieve()
-  //     setBalance(balance)
-  //   }
-
-  //   fetchBalance();
-  // }, [])
-
-  useEffect(()=> {
+  useEffect(() => {
     Axios.get('http://localhost:3003/getBalance')
-    .then(response => setBalance(response.data))
-    .then(response => console.log(response))
-    .then(console.log(balance))
-    // .then(result => console.log(result.data))
-    .catch(error => alert(error))
+    .then(response => {
+      setTransactions(response.data.data);
+    })
+    .then(response => console.log(response.data.data))
 
+      .then(console.log(transactions))
+      .catch(error => {
+        console.log(error);
+      });
   }, []);
+  
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -156,9 +204,17 @@ function DashboardContent() {
                   }}
                 >
                   <div>
-                    {balance ? 'state goes here' : <p>Loading...</p>}
-                    {console.log(balance)}
+  
+                      {transactions ? transactions.map(each => (
+                        <p>${each.amount / 100} USD</p>
+
+                      )
+                      )                     
+                      : <p>Loading...</p>}
+
                   </div>
+
+
                   {/* {console.log(rows)}
                   <div>
                       {rows ? ( 
