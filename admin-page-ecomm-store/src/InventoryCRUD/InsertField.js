@@ -1,5 +1,3 @@
-// import dotenv from 'dotenv';
-// dotenv.config();
 import { Button } from '@mui/material';
 import './InsertField.css';
 import Axios from 'axios';
@@ -14,7 +12,6 @@ import CircularProgress, {
   import { useState, useEffect } from 'react';
   import { display } from '@mui/system';
   import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-//   require('dotenv').config();
 
 function onlyNumbers(e){
     if (e.keyCode >= 65 && e.keyCode <= 90) {
@@ -129,39 +126,43 @@ export default function InsertField() {
 
             // let dynamicObjName = input['prodkey'].value;
             let dynamicObjName = inputValues.prodkey;
-            
-            inputObject = {
-                [dynamicObjName]: {
-                    name: inputValues.name,
-                    size: inputValues.size,
-                    medium: inputValues.medium,
-
-                    price: inputValues.price,
-                    // image: imageSource,
-                    image: imageSrc,
-                    prodkey: inputValues.prodkey,
-                    stripeInvData: inputValues.stripeInvData,
-                    // name: (input['name'].value),
-                    // size: (input['size'].value),
-                    // medium: (input['medium'].value),
-        
-                    // price: (input['price'].value),
-                    // // blob: (input['img'].value),
-                    // image: imageSource,
-                    // prodkey: (input['prodkey'].value)
+            //check: if inputObject already has inputValues.prodkey then return false
+        //    if(inputObject.hasOwnProperty(`${dynamicObjName}`)){
+           if(inputObject[dynamicObjName] === inputValues.prodkey){
+            return false
+           } else {
+               inputObject = {
+                   [dynamicObjName]: {
+                       name: inputValues.name,
+                       size: inputValues.size,
+                       medium: inputValues.medium,
+    
+                       price: inputValues.price,
+                       // image: imageSource,
+                       image: imageSrc,
+                       prodkey: inputValues.prodkey,
+                       stripeInvData: inputValues.stripeInvData,
+                       // name: (input['name'].value),
+                       // size: (input['size'].value),
+                       // medium: (input['medium'].value),
+           
+                       // price: (input['price'].value),
+                       // // blob: (input['img'].value),
+                       // image: imageSource,
+                       // prodkey: (input['prodkey'].value)
+                   }
                 }
+            
             }
 
                 console.log(inputObject)
                 const dynObj = Object.keys(inputObject);
                 // {headers: {'Content-Type': 'multipart/form-data'}}
                 Axios.post('http://localhost:3003/api/insert', inputObject)
-                .catch(error => alert(error), input.value = '')
+                .then(result => alert(result))
+                .catch(error => alert(error+ "  Make sure you are creating a unique product key. Duplicates are not allowed."), input.value = '')
 
-                // const img = document.getElementById('preview');
-                // img.setAttribute('src', null);
 
-                alert('Your item has been added to your inventory!')
         })
         .then(setInputValues({
             name: '',
@@ -278,7 +279,7 @@ export default function InsertField() {
                     <div>
                         <p>Set whether item has finite quantity or infinite</p>
                         <label for="infinite">Print to order (infinite)</label>
-                        <input id='infinite' value={inputValues.stripeInvData} onClick={sendInfinite} name='stripeInvData' type="radio"/>
+                        <input id='infinite' value={inputValues.stripeInvData} onClick={sendInfinite} name='stripeInvData' type="radio" required/>
                         
                         <label for="finite">Selling original (finite)</label>
                         <input id='finite' value={inputValues.stripeInvData} onClick={sendFinite} name='stripeInvData' type="radio"/>

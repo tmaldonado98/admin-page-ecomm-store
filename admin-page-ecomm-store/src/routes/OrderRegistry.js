@@ -18,10 +18,6 @@ import Paper from '@mui/material/Paper';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
-// import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
 import { MDBBtn } from 'mdb-react-ui-kit';
 import ProdInventory from './ProdInventory';
 import {Link} from 'react-router-dom';
@@ -41,8 +37,8 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit">
+        Vea Collections
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -149,24 +145,48 @@ function DashboardContent() {
         >
               <Nav/>
 
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-
-              <Grid item xs={12} md={8} lg={9}>
+              <Grid item xs={12} md={4} lg={3}>
                 <Paper
                   sx={{
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 'fit-content',
-                    width: '100%',
+                    height: 'fitContent',
+                    width: '65%',
+                    margin: 'auto',
                   }}
+                >
+                  <Typography variant="body2" color="text.secondary" align="center" fontSize={'16px'}>
+  
+                    To view more information about your Stripe account balance, orders,
+                    and payout status, log in to your Stripe account Dashboard at: <br/><br/>
+                    <a href='https://dashboard.stripe.com/dashboard' target='_blank' rel="noreferrer, noopener"> Stripe Dashboard </a>
+                    
+                    
+  
+                  </Typography>
+                </Paper>
+              </Grid>
+
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Grid container spacing={3}>
+ {/* md={8} lg={9} */}
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}
+                  // sx={{
+                  //   p: 2,
+                  //   display: 'flex',
+                  //   flexDirection: 'column',
+                  //   height: 'fit-content',
+                  //   width: '100%',
+                  // }}
+                 
                 >
 {transactions ? 
 (
 <>
   
-                  <Title>Recent Orders</Title>
+                  <Title id="title">Recent Orders</Title>
                   <Table size="medium" display='unset' width='auto'>
                     <TableHead>
                       <TableRow maxWidth='inherit'>
@@ -188,7 +208,7 @@ function DashboardContent() {
                           <TableCell>{each.payment_method_details.card.brand} {'•••• '+each.payment_method_details.card.last4}</TableCell>
                           <TableCell align="right">{`$${each.amount / 100}`}</TableCell>
                           <TableCell>{each.billing_details.email}</TableCell>
-                          <TableCell maxWidth='20px'>{each.receipt_url}</TableCell>
+                          <TableCell id='receipt'>{each.receipt_url}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -199,46 +219,7 @@ function DashboardContent() {
                       : <p>Loading...</p>
                       }
 
-
-                  <div>
-  
-                      {transactions ? transactions.map(each => (
-                        <p>${each.amount / 100} USD</p>
-
-                      )
-                      )                     
-                      : <p>Loading...</p>}
-
-                  </div>
-
                   {/* <Chart /> */}
-                </Paper>
-              </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Typography variant="body2" color="text.secondary" align="center" fontSize={'16px'}>
-  
-                    To view more information about your Stripe account balance, orders,
-                    and payout status, log in to your Stripe account Dashboard at: <br/><br/>
-                    <a href='https://dashboard.stripe.com/dashboard' target='_blank'> https://dashboard.stripe.com/dashboard </a>
-                    
-                    
-  
-                  </Typography>
-                </Paper>
-              </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
                 </Paper>
               </Grid>
             </Grid>

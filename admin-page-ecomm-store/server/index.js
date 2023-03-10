@@ -78,10 +78,13 @@ app.post('/api/insert', async (req, res) => {
     db.query(insert, [name, size, medium, price, image, prodkey, stripeInvDataForMysql], (err, result) => {
         if (err) {
             console.log(err)
-            alert(err + "Make sure you are creating a unique product key. Duplicates are not allowed.")
+            // result.json()
+            return false
+            //////IMAGE IS BEING SENT TO FIREBASE EVEN IF INSERT QUERY FAILS -- OVERRIDES EXISTING COMPONENT'S IMGSRC
         } else {
             console.log(result);
             createProductAndPrice();
+            // result.json()
         }
     })
 });

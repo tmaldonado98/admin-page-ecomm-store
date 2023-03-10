@@ -1,3 +1,9 @@
+/* Table */
 .css-rqglhn-MuiTable-root {
     display: unset !important;
+}
+
+/* Table title */
+.css-gi7hi0-MuiTypography-root {
+    text-align: center;
 }
