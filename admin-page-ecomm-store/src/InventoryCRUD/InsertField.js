@@ -1,3 +1,5 @@
+// import dotenv from 'dotenv';
+// dotenv.config();
 import { Button } from '@mui/material';
 import './InsertField.css';
 import Axios from 'axios';
@@ -11,7 +13,8 @@ import CircularProgress, {
   
   import { useState, useEffect } from 'react';
   import { display } from '@mui/system';
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+  import { getStorage, ref, uploadBytes, getDownloadURL, getMetadata } from "firebase/storage";
+//   require('dotenv').config();
 
 function onlyNumbers(e){
     if (e.keyCode >= 65 && e.keyCode <= 90) {
@@ -49,9 +52,11 @@ export default function InsertField() {
         // file = event.target.files[0];
         // console.log(file)
     }
+
+    let imgName = null;
     useEffect(() => {
         console.log(file);
-        let imgName =  keyState;
+        imgName =  keyState;
 
         // const storageRef = ref(storage, `images/${imgName}`);
         setStorageRef(ref(storage, `images/${imgName}`))
@@ -100,84 +105,156 @@ export default function InsertField() {
     //     // const storageRef = storage.ref().child(`images/${file.name}`);
 
     // }
+    let inputObject = {};
 
-    async function insert(){
-
-        setIsUploading(true);
-        await uploadBytes(storageRef, file)
-        setIsUploading(false)
-        await getDownloadURL(storageRef)
-        .then((url) => {
-            console.log(url)
-            imageSrc = url;
-            // setImageSource(url);
-            // console.log(imageSource)
-            // const img = document.getElementById('preview');
-            // img.setAttribute('src', url);
-            setKeyState('');
-        })
-            
-        // .then((snapshot) => {
-        //     // console.log('File uploaded successfully with name: ' + keyState);           
-        // })
-        .then(() => {
-            let inputObject = {};
-            const input = document.getElementsByTagName("input");
-
-            // let dynamicObjName = input['prodkey'].value;
-            let dynamicObjName = inputValues.prodkey;
-            //check: if inputObject already has inputValues.prodkey then return false
-        //    if(inputObject.hasOwnProperty(`${dynamicObjName}`)){
-           if(inputObject[dynamicObjName] === inputValues.prodkey){
-            return false
-           } else {
-               inputObject = {
-                   [dynamicObjName]: {
-                       name: inputValues.name,
-                       size: inputValues.size,
-                       medium: inputValues.medium,
+    // async function insert(){
+    //     // inputObject.hasOwnProperty(`${ inputValues.prodkey}`)
+    //     if (ref(storage, `images/${inputValues.prodkey}`)) {
+    //         alert('Make sure you are creating a unique product key. Duplicates are not allowed.')
+    //         return false
+    //     } else {
+    //         setIsUploading(true);
+    //         await uploadBytes(storageRef, file)
+    //         setIsUploading(false)
+    //         await getDownloadURL(storageRef)
+    //         .then((url) => {
+    //             console.log(url)
+    //             imageSrc = url;
+    //             // setImageSource(url);
+    //             // console.log(imageSource)
+    //             // const img = document.getElementById('preview');
+    //             // img.setAttribute('src', url);
+    //             setKeyState('');
+    //         })
+                
+    //         // .then((snapshot) => {
+    //         //     // console.log('File uploaded successfully with name: ' + keyState);           
+    //         // })
+    //         .then(() => {
+    //             const input = document.getElementsByTagName("input");
     
-                       price: inputValues.price,
-                       // image: imageSource,
-                       image: imageSrc,
-                       prodkey: inputValues.prodkey,
-                       stripeInvData: inputValues.stripeInvData,
-                       // name: (input['name'].value),
-                       // size: (input['size'].value),
-                       // medium: (input['medium'].value),
-           
-                       // price: (input['price'].value),
-                       // // blob: (input['img'].value),
-                       // image: imageSource,
-                       // prodkey: (input['prodkey'].value)
-                   }
-                }
+    //             // let dynamicObjName = input['prodkey'].value;
+    //             let dynamicObjName = inputValues.prodkey;
+    //             //check: if inputObject already has inputValues.prodkey then return false
+    //         //    if(inputObject.hasOwnProperty(`${dynamicObjName}`)){
+    
+    //                inputObject = {
+    //                    [dynamicObjName]: {
+    //                        name: inputValues.name,
+    //                        size: inputValues.size,
+    //                        medium: inputValues.medium,
+        
+    //                        price: inputValues.price,
+    //                        // image: imageSource,
+    //                        image: imageSrc,
+    //                        prodkey: inputValues.prodkey,
+    //                        stripeInvData: inputValues.stripeInvData,
+    //                        // name: (input['name'].value),
+    //                        // size: (input['size'].value),
+    //                        // medium: (input['medium'].value),
+               
+    //                        // price: (input['price'].value),
+    //                        // // blob: (input['img'].value),
+    //                        // image: imageSource,
+    //                        // prodkey: (input['prodkey'].value)
+    //                    }
+    //                 }
+                
+                
+    
+    //                 console.log(inputObject)
+    //                 const dynObj = Object.keys(inputObject);
+    //                 // {headers: {'Content-Type': 'multipart/form-data'}}
+    //                 Axios.post('http://localhost:3003/api/insert', inputObject)
+    //                 .then(alert('Your item has been added to your inventory!'))
+    //                 .catch(error => alert(error+ "  Make sure you are creating a unique product key. Duplicates are not allowed."), input.value = '')
+    
+    //                 // const img = document.getElementById('preview');
+    //                 // img.setAttribute('src', null);
+    
+    //         })
+    
+    //         // })
+    //         .then(setInputValues({
+    //             name: '',
+    //             size: '',
+    //             medium: '',
+    //             price: '',
+    //             img: '',
+    //             prodkey: '',
+    //             stripeInvData: null,
+    //           })
+    //           )
+    //         .catch((error) => {
+    //            alert('Error uploading file', error);
+    //         })
             
+    //     }
+        
+    // }
+
+    async function insert() {
+        const fileRef = ref(storage, `images/${inputValues.prodkey}`);
+        const fileExists = await getMetadata(fileRef)
+          .then(metadata => {
+            if (metadata) {
+              return true;
+            } else {
+              return false;
             }
-
-                console.log(inputObject)
-                const dynObj = Object.keys(inputObject);
-                // {headers: {'Content-Type': 'multipart/form-data'}}
-                Axios.post('http://localhost:3003/api/insert', inputObject)
-                .then(result => alert(result))
-                .catch(error => alert(error+ "  Make sure you are creating a unique product key. Duplicates are not allowed."), input.value = '')
-
-
-        })
-        .then(setInputValues({
-            name: '',
-            size: '',
-            medium: '',
-            price: '',
-            img: '',
-            prodkey: '',
-            stripeInvData: null,
           })
-          )
-        .catch((error) => {
-           alert('Error uploading file', error);
-        })
-    }
+          .catch(error => {
+            if (error.code === 'storage/object-not-found') {
+              return false;
+            }
+            console.error(error);
+          });
+      
+        if (fileExists) {
+          alert('Make sure you are creating a unique product key. Duplicates are not allowed.');
+          return false;
+        } else {
+          // proceed with uploading the file
+          setIsUploading(true);
+          await uploadBytes(storageRef, file);
+          setIsUploading(false);
+          await getDownloadURL(storageRef)
+            .then((url) => {
+              console.log(url);
+              imageSrc = url;
+              setKeyState('');
+            })
+            .then(() => {
+              // Insert the data into the database
+              const dynamicObjName = inputValues.prodkey;
+              inputObject = {
+                [dynamicObjName]: {
+                  name: inputValues.name,
+                  size: inputValues.size,
+                  medium: inputValues.medium,
+                  price: inputValues.price,
+                  image: imageSrc,
+                  prodkey: inputValues.prodkey,
+                  stripeInvData: inputValues.stripeInvData,
+                }
+              };
+              console.log(inputObject);
+              Axios.post('http://localhost:3003/api/insert', inputObject)
+                .then(alert('Your item has been added to your inventory!'))
+                .catch(error => alert(error + "  Make sure you are creating a unique product key. Duplicates are not allowed."));
+            })
+            .then(setInputValues({
+              name: '',
+              size: '',
+              medium: '',
+              price: '',
+              img: '',
+              prodkey: '',
+              stripeInvData: null,
+            }));
+        }
+      }
+      
 
     function handleKeyInput (e){
         // console.log(e.target.value);
