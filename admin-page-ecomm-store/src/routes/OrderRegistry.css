@@ -7,3 +7,10 @@
 .css-gi7hi0-MuiTypography-root {
     text-align: center;
 }
+
+
+/* thead */
+.css-15wwp11-MuiTableHead-root {
+    font-size: 18px; 
+    font-weight: bold;
+}

@@ -78,13 +78,10 @@ app.post('/api/insert', async (req, res) => {
     db.query(insert, [name, size, medium, price, image, prodkey, stripeInvDataForMysql], (err, result) => {
         if (err) {
             console.log(err)
-            // result.json()
             return false
-            //////IMAGE IS BEING SENT TO FIREBASE EVEN IF INSERT QUERY FAILS -- OVERRIDES EXISTING COMPONENT'S IMGSRC
         } else {
             console.log(result);
             createProductAndPrice();
-            // result.json()
         }
     })
 });
@@ -234,7 +231,6 @@ app.post('/deleteRow', (requ, respo) => {
         })
         .then(stripe.products.update(productId, {active: false}))
         .catch(error => console.log(error))
-
     }
 
 })
@@ -242,7 +238,7 @@ app.post('/deleteRow', (requ, respo) => {
 app.get('/getBalance', async (request, response) => {
 
     const charges = await stripe.charges.list({
-        limit: 3,
+        // limit: 20,
       })
     // .then(console.log(response.data))
 

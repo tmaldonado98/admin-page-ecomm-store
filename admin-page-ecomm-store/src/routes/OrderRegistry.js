@@ -168,7 +168,7 @@ function DashboardContent() {
                 </Paper>
               </Grid>
 
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxwidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
  {/* md={8} lg={9} */}
               <Grid item xs={12}>
@@ -189,7 +189,7 @@ function DashboardContent() {
                   <Title id="title">Recent Orders</Title>
                   <Table size="medium" display='unset' width='auto'>
                     <TableHead>
-                      <TableRow maxWidth='inherit'>
+                      <TableRow maxwidth='inherit'>
                         <TableCell>Date</TableCell>
                         <TableCell>Name</TableCell>
                         <TableCell>Ship To</TableCell>
@@ -201,7 +201,7 @@ function DashboardContent() {
                     </TableHead>
                     <TableBody>
                       {transactions.map(each => (
-                        <TableRow maxWidth='inherit' key={each.id}>
+                        <TableRow maxwidth='inherit' key={each.id}>
                           <TableCell>{formatDate(each.created)}</TableCell>
                           <TableCell>{each.billing_details.name}</TableCell>
                           <TableCell>{each.billing_details.address.city}, {each.billing_details.address.country} {each.billing_details.address.postal_code}</TableCell>

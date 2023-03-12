@@ -273,7 +273,7 @@ export default function InsertField() {
         price: '',
         img: '',
         prodkey: '',
-        stripeInvData: '',
+        stripeInvData: {type: 'Print to order'},
       });
     
       const handleInputChange = (event) => {
@@ -296,7 +296,7 @@ export default function InsertField() {
         const validPrice = inputValues.price !== '';
         const validImg = inputValues.img !== '';
         const validProdkey = inputValues.prodkey !== '';
-        const validRadio = inputValues.stripeInvData !== null;
+        const validRadio = inputValues.stripeInvData !== '';
 
         setStatus(validName && validSize && validMedium && validPrice && validImg && validProdkey && validRadio ? false : true);
       }, [inputValues]);
@@ -361,12 +361,6 @@ export default function InsertField() {
                         <label for="finite">Selling original (finite)</label>
                         <input id='finite' value={inputValues.stripeInvData} onClick={sendFinite} name='stripeInvData' type="radio"/>
                     </div>
-{/* 
-                    <div id='img-preview'>
-                        <p>Image Preview (size will be bigger on store page)</p>
-                        {<img id='preview' width={200} height={200} />}
-                    </div>
-                     */}
                     <br/>
 
                     <Button disabled={status} onClick={handleSubmit} variant='contained' >{isUploading == false ? 'Add Product' : 
