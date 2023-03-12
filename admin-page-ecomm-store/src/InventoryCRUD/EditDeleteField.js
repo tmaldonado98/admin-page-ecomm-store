@@ -35,7 +35,8 @@ const [stateEditObj, setStateEditObj] = useState({
   medium: '',
   price: '',
   prodkey: '',
-  invtype: null,
+  invtype: '',
+  author: '',
 });
 
 const [savedStatus, setSavedStatus] = useState(false)
@@ -62,7 +63,7 @@ const [savedStatus, setSavedStatus] = useState(false)
         price: theRow.price,
         prodkey: theRow.prodkey,
         invtype: theRow.invtype,
-
+        author: theRow.author,
       })
     
 
@@ -102,12 +103,6 @@ const [savedStatus, setSavedStatus] = useState(false)
     const storage = getStorage();
     const fileRef = ref(storage, `images/${prodkey}`);
 
-    // async function removeFB(){
-    //   await storageRef.delete();
-      
-    //   console.log(imgName + 'deleted from Firebase')
-    // }
-   
     const key = prodkey;
     const confirm = window.confirm('Are you sure?'); 
     if(confirm){
@@ -139,7 +134,7 @@ const [savedStatus, setSavedStatus] = useState(false)
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th><th>Name</th><th>Size</th><th>Medium</th><th>Price</th><th>Image Source</th><th>Unique Key</th><th>Inv. Type</th><th>Edit/Delete</th>
+                        <th>ID</th><th>Name</th><th>Size</th><th>Medium</th><th>Price</th><th>Image Source</th><th>Unique Key</th><th>Inv. Type</th><th>Author</th><th>Edit/Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -168,23 +163,21 @@ const [savedStatus, setSavedStatus] = useState(false)
                                     <input id='finite' onClick={e => setStateEditObj({...stateEditObj, invtype: 'Original'})} name='stripeInvData' type="radio"/>                                    
                                   </div>
                                 ) : (item.invtype)}</td>
-{/*                                 
-                                <input type='text' name='invtype' disabled={false} defaultValue={item.prodkey} onChange={e => setStateEditObj({...stateEditObj, prodkey: e.target.value})}/>
 
+                                <td id='authorTd'>{editingRow === item.prodkey ? (<div>
+                                  <label for="veaWolf">Vea Wolf</label>
+                                  <input id='veaWolf'  onClick={e => setStateEditObj({...stateEditObj, author: 'Vea Wolf'})} name='author' type="radio"/> <br/><br/>
+                                  <label for="tmVea">T.M. Vea</label>
+                                  <input id='tmVea' onClick={e => setStateEditObj({...stateEditObj, author: 'T.M. Vea'})} name='author' type="radio"/>                                    
+                                </div>
+                              ) : (item.author)}</td>
 
-
-                                <label for="infinite">Print to order (infinite)</label>
-                        <input id='infinite' value={inputValues.stripeInvData} onChange={sendInfinite} name='stripeInvData' type="radio" required/>
-                        
-                        <label for="finite">Selling original (finite)</label>
-                        <input id='finite' value={inputValues.stripeInvData} onChange={sendFinite} name='stripeInvData' type="radio"/> */}
-
-                                <td> {editingRow === item.prodkey ? (<div>
-                                  <Button onClick={handleSave}>Save</Button> <Button onClick={() => handleRemove(item.prodkey)}>Remove</Button></div>)
-                                 
-                                : 
-                                <div>{<Button onClick={()=> handleEdit(item.prodkey)}>Edit</Button>} <Button onClick={() => handleRemove(item.prodkey)}>Remove</Button></div>}
-                                </td>
+                              <td> {editingRow === item.prodkey ? (<div>
+                                <Button onClick={handleSave}>Save</Button> <Button onClick={() => handleRemove(item.prodkey)}>Remove</Button></div>)
+                               
+                              : 
+                              <div>{<Button onClick={()=> handleEdit(item.prodkey)}>Edit</Button>} <Button onClick={() => handleRemove(item.prodkey)}>Remove</Button></div>}
+                              </td>
                             </tr>
                         ))}
                     </>)

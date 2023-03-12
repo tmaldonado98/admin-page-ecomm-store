@@ -64,47 +64,6 @@ export default function InsertField() {
         // console.log('name of image is '+ imgName)
     }, [file]);
     
-    // function handleFileUpload(event){
-
-    //     // let imgName =  keyState;
-
-    //     // const storage = getStorage(firebaseApp);
-    //     // const storageRef = ref(storage, `images/${imgName}`);
-        
-    //     // uploadBytes(storageRef, file)
-    //     // .then((snapshot) => {
-    //     //     // storageRef = 
-    //     //     console.log('File uploaded successfully with name: ' + imgName);
-
-    //     //     getDownloadURL(storageRef)
-    //     //     .then((url) => {
-    //     //         setImageSource(url);
-    //     //         // const img = document.getElementById('preview');
-    //     //         // img.setAttribute('src', url);
-    //     //         console.log(imageSource);
-    //     //     })
-    //     //     setKeyState('');
-    //     // })
-    //     // .catch((error) => {
-    //     //     console.error('Error uploading file', error);
-    //     // });
-        
-
-    //     // setTimeout(() => {
-
-    //         // await getDownloadURL(storageRef)
-    //         //     .then((url) => {
-    //         //         setImageSource(url);
-    //         //         // const img = document.getElementById('preview');
-    //         //         // img.setAttribute('src', url);
-    //         //         console.log(imageSource);
-    //         // })
-    //     // }, 1000)
-
-    //     // Create a reference to the file in Firebase Storage
-    //     // const storageRef = storage.ref().child(`images/${file.name}`);
-
-    // }
     let inputObject = {};
 
     // async function insert(){
@@ -236,6 +195,7 @@ export default function InsertField() {
                   image: imageSrc,
                   prodkey: inputValues.prodkey,
                   stripeInvData: inputValues.stripeInvData,
+                  author: inputValues.author,
                 }
               };
               console.log(inputObject);
@@ -250,7 +210,8 @@ export default function InsertField() {
               price: '',
               img: '',
               prodkey: '',
-              stripeInvData: null,
+              stripeInvData: '',
+              author: '',
             }));
         }
       }
@@ -260,9 +221,6 @@ export default function InsertField() {
         // console.log(e.target.value);
         return setKeyState(e.target.value);
     }
-    
-    
-
     
     const [status, setStatus] = useState(true)
 
@@ -274,6 +232,7 @@ export default function InsertField() {
         img: '',
         prodkey: '',
         stripeInvData: {type: 'Print to order'},
+        author: '',
       });
     
       const handleInputChange = (event) => {
@@ -288,6 +247,13 @@ export default function InsertField() {
         setInputValues({ ...inputValues, stripeInvData: {type: 'Original', quantity: 1} });
       }
     
+      const veaWolf = () => {
+        setInputValues({ ...inputValues, author: {name: 'Vea Wolf'} });
+      }
+      const tmVea = () => {
+        setInputValues({ ...inputValues, author: {name: 'T.M. Vea'} });
+      }
+
       useEffect(() => {
         const validName = inputValues.name !== '';
         const validSize = inputValues.size !== '';
@@ -297,19 +263,10 @@ export default function InsertField() {
         const validImg = inputValues.img !== '';
         const validProdkey = inputValues.prodkey !== '';
         const validRadio = inputValues.stripeInvData !== '';
+        const validAuthor = inputValues.author !== '';
 
-        setStatus(validName && validSize && validMedium && validPrice && validImg && validProdkey && validRadio ? false : true);
+        setStatus(validName && validSize && validMedium && validPrice && validImg && validProdkey && validRadio && validAuthor ? false : true);
       }, [inputValues]);
-    
-    //   function handleFileInput(){
-    //     // handleFileUpload(event);
-    //     setInputValues({ ...inputValues, img: true });
-    //   }
-
-    //   function handleKeyChange(){
-    //     handleKeyInput();
-    //     handleInputChange();
-    //   }
     
     function handleSubmit (){
         insert();
@@ -360,6 +317,16 @@ export default function InsertField() {
                         
                         <label for="finite">Selling original (finite)</label>
                         <input id='finite' value={inputValues.stripeInvData} onClick={sendFinite} name='stripeInvData' type="radio"/>
+                    </div>
+                    <br/>
+
+                    <div>
+                        <p>Creator of artwork:</p>
+                        <label for="veaWolf">Vea Wolf</label>
+                        <input id='veaWolf' value={inputValues.author} onClick={veaWolf} name='author' type="radio" required/>
+                        
+                        <label for="tmVea">T.M. Vea</label>
+                        <input id='tmVea' value={inputValues.author} onClick={tmVea} name='author' type="radio"/>
                     </div>
                     <br/>
 

@@ -45,7 +45,8 @@ app.post('/api/insert', async (req, res) => {
 
     const medium = skipDynObj[0].medium;  
     const price = skipDynObj[0].price;  
-    const prodkey = skipDynObj[0].prodkey;  
+    const prodkey = skipDynObj[0].prodkey;
+    const author = skipDynObj[0].author.name;  
 
     const stripeInvData = skipDynObj[0].stripeInvData;  
 
@@ -74,8 +75,8 @@ app.post('/api/insert', async (req, res) => {
 
     }
     
-    const insert = 'INSERT INTO inventory (name, size, medium, price, imgsrc, prodkey, invtype) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    db.query(insert, [name, size, medium, price, image, prodkey, stripeInvDataForMysql], (err, result) => {
+    const insert = 'INSERT INTO inventory (name, size, medium, price, imgsrc, prodkey, invtype, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(insert, [name, size, medium, price, image, prodkey, stripeInvDataForMysql, author], (err, result) => {
         if (err) {
             console.log(err)
             return false
@@ -109,8 +110,8 @@ app.post('/edit', async (req, response) => {
     const price = Number(reference.price); 
     // console.log(price) 
     const prodkey = reference.prodkey.toString();  
-
     const stripeInvData = reference.invtype;  
+    const author = reference.author;
 
     console.log(stripeInvData)
 
@@ -174,8 +175,8 @@ app.post('/edit', async (req, response) => {
         .catch(error => console.log(error))
     }
        
-    const edit = `UPDATE inventory SET name = ?, size = ?, medium = ?, price = ?, prodkey = ?, invtype = ?  WHERE prodkey = ?`
-    db.query(edit, [name, size, medium, price, prodkey, stripeInvData, prodkey], (err, resu) => {
+    const edit = `UPDATE inventory SET name = ?, size = ?, medium = ?, price = ?, prodkey = ?, invtype = ?, author = ?  WHERE prodkey = ?`
+    db.query(edit, [name, size, medium, price, prodkey, stripeInvData, author, prodkey], (err, resu) => {
         if (err) {
             console.log(err)
         } else {
