@@ -113,7 +113,7 @@ function DashboardContent() {
     })
     .then(response => console.log(response.data.data))
 
-      // .then(console.log(transactions))
+      .then(console.log(transactions))
       .catch(error => {
         console.log(error);
       });
@@ -191,11 +191,12 @@ function DashboardContent() {
                     <TableHead>
                       <TableRow maxwidth='inherit'>
                         <TableCell>Date</TableCell>
+                        <TableCell><u>Shipping</u> Address</TableCell>
                         <TableCell>Name</TableCell>
-                        <TableCell>Ship To</TableCell>
                         <TableCell>Payment Method</TableCell>
                         <TableCell align="right">Sale Amount</TableCell>
                         <TableCell align="center">Contact</TableCell>
+                        <TableCell>Billing Address</TableCell>
                         <TableCell align="center">Receipt</TableCell>
                       </TableRow>
                     </TableHead>
@@ -203,11 +204,12 @@ function DashboardContent() {
                       {transactions.map(each => (
                         <TableRow maxwidth='inherit' key={each.id}>
                           <TableCell>{formatDate(each.created)}</TableCell>
+                          <TableCell>{each.shipping ? each.shipping.address.line1 +', '+(each.shipping.address.line2 ? each.shipping.address.line2 +', ' : '') + each.shipping.address.city +', '+each.shipping.address.state +', '+each.shipping.address.country +', '+each.shipping.address.postal_code : ''}</TableCell> 
                           <TableCell>{each.billing_details.name}</TableCell>
-                          <TableCell>{each.billing_details.address.city}, {each.billing_details.address.country} {each.billing_details.address.postal_code}</TableCell>
-                          <TableCell>{each.payment_method_details.card.brand} {'•••• '+each.payment_method_details.card.last4}</TableCell>
-                          <TableCell align="right">{`$${each.amount / 100}`}</TableCell>
+                          <TableCell>{each.payment_method_details.type+', '}{each.payment_method_details.card.brand ? each.payment_method_details.card.brand : ''} {'•••• '+each.payment_method_details.card.last4}</TableCell>
+                          <TableCell align="right">{`$${each.amount / 100} USD`}</TableCell>
                           <TableCell>{each.billing_details.email}</TableCell>
+                          <TableCell>{each.billing_details.address.line1 + ', '} {each.billing_details.address.line2 ? each.billing_details.address.line2+', ' : ''} {each.billing_details.address.city+', '} {each.billing_details.address.state+', '} {each.billing_details.address.country+', '} {each.billing_details.address.postal_code}</TableCell>
                           <TableCell id='receipt'>{each.receipt_url}</TableCell>
                         </TableRow>
                       ))}

@@ -55,7 +55,7 @@ app.post('/api/insert', async (req, res) => {
     async function createProductAndPrice() {
     const newProduct = await stripe.products.create({
             name: name,
-            description: 'The product key you provided is: ' + prodkey,
+            description: 'Your selected artwork is: ' + name + ', by ' + author,
             type: 'good',
             images: [image],
             metadata: {
