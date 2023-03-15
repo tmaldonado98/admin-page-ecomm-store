@@ -1,12 +1,9 @@
-// 'use strict';
-// import Stripe from 'stripe';
 require('dotenv').config();
 const express = require('express');
 const bodyparser = require('body-parser');
 const app = express();
 const cors = require('cors');
 const mysql = require('mysql2');
-const multer = require('multer');
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
 // console.log(process.env.STRIPE_PRIVATE_KEY);

@@ -8,8 +8,25 @@ import FilledInput from '@mui/material/FilledInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
 import './Forms.css';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import Button from '@mui/material/Button';
+
+
+const firebaseConfig = {
+  // your Firebase app configuration object
+  apiKey: process.env.API_KEY ,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: "vea-collections.appspot.com", //process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
+  measurementId: process.env.MEASUREMENT_ID
+};
+const firebaseApp = initializeApp(firebaseConfig);
+
+const auth = getAuth(firebaseApp);
 
 export default function Form (){
     const [showPassword, setShowPassword] = useState(false);
@@ -20,8 +37,29 @@ export default function Form (){
       event.preventDefault();
     };
 
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+  
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // User is signed in
+          const user = userCredential.user;
+          console.log(`Logged in as ${user.email}`);
+        })
+        .catch((error) => {
+          // Handle login error
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.error(`Login error: ${errorMessage}`);
+        });
+    };
+
     return (
-<Box
+      <Box
       component="form"
       sx={{
         '& .MuiTextField-root': { m: 1, width: '25ch' },
@@ -55,6 +93,11 @@ export default function Form (){
               }
             />
       </div>
+      <div className='buttons'>
+          <Button className='button' variant="outlined" size="large">
+            Login
+          </Button>
+        </div>
               {/* <TextField
           error
           id="filled-error-helper-text"
