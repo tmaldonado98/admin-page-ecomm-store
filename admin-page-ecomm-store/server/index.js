@@ -27,9 +27,15 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyparser.urlencoded({extended: true}))
 
-// const upload =  multer({storage: multer.memoryStorage()});   upload.single("img"),
 
-// async
+// Login route
+app.post('/', async (request, response) => {
+    const email = request.body[0];
+    const psw = request.body[1];    
+
+})
+
+
 app.post('/api/insert', async (req, res) => {
 
     const reference = req.body;
@@ -253,9 +259,3 @@ app.listen(port, () => {
         console.log('database connected')
     })
 })
-
-    // "devStart": "nodemon index.js", 
-    // "start": "CHOKIDAR_USEPOLLING=true react-scripts start",   <--for react on package.json
-
-
-

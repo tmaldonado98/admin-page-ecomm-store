@@ -1,5 +1,5 @@
-// require('dotenv').config();
 import * as React from 'react';
+import axios from 'axios';
 import {useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
@@ -10,30 +10,9 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import './Forms.css';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import Button from '@mui/material/Button';
+import { useSignIn } from 'react-auth-kit';
 
-console.log(process.env)
-const firebaseConfig = {
-  // your Firebase app configuration object
-  // apiKey: process.env.REACT_APP_API_KEY ,
-  apiKey: 'AIzaSyAg98s9T7TSlWTywldvgiFqUGlMZlcwy-U',
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID
-};
-
-console.log(process.env.REACT_APP_API_KEY)
-console.log(firebaseConfig)
-console.log(firebaseConfig.apiKey)
-
-const firebaseApp = initializeApp(firebaseConfig);
-
-const auth = getAuth(firebaseApp);
 
 
 
@@ -47,25 +26,40 @@ function App() {
     event.preventDefault();
   };
 
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e) => {
+  const signIn = useSignIn();
+  
+  const handleLogin = async (e) => {
     e.preventDefault();
+    const data = [email, password];
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // User is signed in
-        const user = userCredential.user;
-        console.log(`Logged in as ${user.email}`);
-      })
-      .catch((error) => {
-        // Handle login error
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error(`Login error: ${errorMessage}`);
-      });
+  //   if(signIn(
+  //     {
+  //         token: res.data.token,
+  //         expiresIn:res.data.expiresIn,
+  //         tokenType: "Bearer",
+  //         authState: res.data.authUserState,
+  //     }
+  // )){
+  //     // Redirect or do-something
+  // }else {
+  //     //Throw error
+  // }
+
+    try {
+      const response = await axios.post('http://localhost:3002', data);
+      // .then(console.log(response))
+      // const signIn
+      console.log(response)
+      // signIn({
+      //   token: response.data
+      // })
+    
+    } catch (error) {
+        console.log(error)
+    }
   };
 
 React.useEffect(() => {
@@ -85,7 +79,10 @@ React.useEffect(() => {
       <div>
         <h1>Vea Collections - <br/> Administrative Control Panel</h1>
         <label>Admin User</label>
-        <TextField id="filled-basic adminname email" value={email} placeholder="Admin User" variant="filled" onChange={(e) => setEmail(e.target.value)}/>
+        <TextField id="filled-basic adminname email" value={email} placeholder="Admin User" variant="filled" onChange={(e) => setEmail(e.target.value)}
+            autoComplete='false'
+            autoSave='false'
+        />
         
       </div>
 
@@ -93,6 +90,8 @@ React.useEffect(() => {
         <label>Admin Password</label>
         <FilledInput
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete='false'
+              autoSave='false'
               id="filled-adornment-password adminpass"
               type={showPassword ? 'text' : 'password'}
               placeholder="Admin Password"

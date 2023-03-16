@@ -8,20 +8,27 @@ import OrderRegistry from './routes/OrderRegistry';
 import DemoDashboard from './routes/DemoDashboard';
 import ProdInventory from './routes/ProdInventory';
 import { useMemo } from 'react';
+import { AuthProvider } from 'react-auth-kit'
+// import RouteComponent from './routes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-        
-    <BrowserRouter>
-          <Routes>
-                <Route exact path='/' element={<App />}/>
-                <Route path='/OrderRegistry' element={<OrderRegistry/>}/>
-                <Route path='/DemoDashboard' element={<DemoDashboard/>}/>
-                <Route path='/ProdInventory' element={<ProdInventory/>}/>
-            
-          </Routes>
-      
-    </BrowserRouter>  
+      <AuthProvider authType = {'cookie'}
+            authName={'_auth'}
+            cookieDomain={window.location.hostname}
+            cookieSecure={false}> 
+            {/* set cookieSecure to this when in production-> window.location.protocol === "https:" */}
+            <BrowserRouter>
+                  <Routes>
+                        <Route exact path='/' element={<App />}/>
+                        <Route path='/OrderRegistry' element={<OrderRegistry/>}/>
+                        <Route path='/DemoDashboard' element={<DemoDashboard/>}/>
+                        <Route path='/ProdInventory' element={<ProdInventory/>}/>
+                        
+                  </Routes>
+                  
+            </BrowserRouter>  
+      </AuthProvider>
 </React.StrictMode>
 );
