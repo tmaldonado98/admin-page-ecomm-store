@@ -1,10 +1,10 @@
 GET http://localhost:3003/login
 
 
-POST  http://localhost:3003/login
-Content-Type: application/javascript
+# POST  http://localhost:3003/login
+# Content-Type: application/javascript
 
-{
-    "email": "test@gmail.com",
-    "password": "test"
-}
+# {
+#     "email": "test@gmail.com",
+#     "password": "test"
+# }

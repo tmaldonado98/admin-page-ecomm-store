@@ -33,11 +33,29 @@ function App() {
   
   const handleLogin = async (e) => {
     // e.preventDefault();
-    const data = {email, password};
-    console.log(data)
-    const response = await axios.post('http://localhost:3003/users/login', data)
-    .catch(error => alert(error))
-  //   if(signIn(
+    const token = [];
+    try {
+      const data = {email, password};
+      console.log(data)
+      const response = await axios.post('http://localhost:3003/login', data)
+      
+      .then(res => token.push(res.data.token))
+      .then(res => signIn({
+        token: token[0],
+        expiresIn: 3600,
+        tokenType: 'Bearer',
+        authState: { email: data.email}
+      })
+      )
+      
+      .catch(error => alert(error))
+      
+
+      
+    } catch (error){
+      console.log(error)
+    }
+    //   if(signIn(
   //     {
   //         token: res.data.token,
   //         expiresIn:res.data.expiresIn,

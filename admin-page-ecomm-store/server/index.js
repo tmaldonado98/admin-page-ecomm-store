@@ -9,14 +9,10 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-// console.log(process.env.STRIPE_PRIVATE_KEY);
 const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
 const password = process.env.DB_PASSWORD;
 const database = process.env.DB_NAME;
-// console.log(process.env.DB_HOST);
-// console.log(process.env.DB_USER);
-// console.log(database);
 
 const db = mysql.createConnection({
     host: host,
@@ -30,48 +26,98 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyparser.urlencoded({extended: true}))
 
-const users = [];
+// const users = [];
 
-app.get('/login', (req, res) => {
-    res.json(users)
-})
+// app.get('/login', (req, res) => {
+//     res.json(users)
+// })
+
+///auth with table
+app.post('/login', async (req, res) => {
+    const email = req.body.email;
+    console.log(email)
+    const password = req.body.password;
+    console.log(password)
+
+    // const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    // console.log(hashedPassword)
+
+    db.query('SELECT * FROM admin WHERE email = ?', [email], async (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).send('Internal server error');
+        }
+        
+        // Check if the user exists
+        if (results.length === 0) {
+              console.log(results)
+            return res.status(401).send('Invalid email or password');
+          }
+      
+          // Check if the password matches
+          console.log(results)
+          const user = results[0];
+          console.log(user)
+            const isMatch = await bcrypt.compare(password, user.password);
+          if (password !== user.password) {
+              return res.status(401).send('Invalid email or password');
+            }
+            
+            // Generate a JWT token and sign it with a secret key
+            const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET);
+            
+            // Return the token in the response
+            res.send({ token });
+            console.log(token)
+      
+    })
+
+});
+
+
 
 // Login route
-app.post('/login', async (request, response) => {
-    try {
-        // const salt = await bcrypt.genSalt()
-        const hashedPassword = await bcrypt.hash(request.body.password, 10)
-        // console.log(salt)
-        // console.log(hashedPassword)
+// app.post('/users', async (request, response) => {
+//     try {
+//         // const salt = await bcrypt.genSalt()
+//         const hashedPassword = await bcrypt.hash(request.body.password, 10)
+//         // console.log(salt)
+//         // console.log(hashedPassword)
         
-        const user = {email: request.body.email, password: hashedPassword}
-        users.push(user);
-        response.status(201).send()
-    } catch (error) {
-        response.status(500).send();
-    }
+//         const user = {email: request.body.email, password: hashedPassword}
+//         users.push(user);
+//         response.status(201).send()
+//     } catch (error) {
+//         response.status(500).send();
+//     }
     
     
-    // const email = request.body.email;
-    // const psw = request.body.password;    
+//     // const email = request.body.email;
+//     // const psw = request.body.password;    
 
-    // console.log(email, psw);
-//////
+//     // console.log(email, psw);
+// //////
 
-    // // Generate a JWT
-    // const token = jwt.sign({ email: email }, 'secret_key');
+//     // // Generate a JWT
+//     // const token = jwt.sign({ email: email }, 'secret_key');
 
-    // // Verify a JWT
-    // try {
-    // const decoded = jwt.verify(token, 'secret_key');
-    // console.log(decoded.email);
+//     // // Verify a JWT
+//     // try {
+//     // const decoded = jwt.verify(token, 'secret_key');
+//     // console.log(decoded.email);
 
-    // res.json({message: 'Welcome', token: token})
-    // } catch (err) {
-    // console.error(err);
-    // }
+//     // res.json({message: 'Welcome', token: token})
+//     // } catch (err) {
+//     // console.error(err);
+//     // }
 
-})
+// })
+
+// app.post('/users/login', async (request, response) => {
+//     const user = users.find(user => user.email === request.body.name);
+
+// });
+
 
 
 app.post('/api/insert', async (req, res) => {
