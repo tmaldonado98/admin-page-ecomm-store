@@ -6,6 +6,9 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
 // console.log(process.env.STRIPE_PRIVATE_KEY);
 const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
@@ -27,11 +30,46 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyparser.urlencoded({extended: true}))
 
+const users = [];
+
+app.get('/login', (req, res) => {
+    res.json(users)
+})
 
 // Login route
-app.post('/', async (request, response) => {
-    const email = request.body[0];
-    const psw = request.body[1];    
+app.post('/login', async (request, response) => {
+    try {
+        // const salt = await bcrypt.genSalt()
+        const hashedPassword = await bcrypt.hash(request.body.password, 10)
+        // console.log(salt)
+        // console.log(hashedPassword)
+        
+        const user = {email: request.body.email, password: hashedPassword}
+        users.push(user);
+        response.status(201).send()
+    } catch (error) {
+        response.status(500).send();
+    }
+    
+    
+    // const email = request.body.email;
+    // const psw = request.body.password;    
+
+    // console.log(email, psw);
+//////
+
+    // // Generate a JWT
+    // const token = jwt.sign({ email: email }, 'secret_key');
+
+    // // Verify a JWT
+    // try {
+    // const decoded = jwt.verify(token, 'secret_key');
+    // console.log(decoded.email);
+
+    // res.json({message: 'Welcome', token: token})
+    // } catch (err) {
+    // console.error(err);
+    // }
 
 })
 

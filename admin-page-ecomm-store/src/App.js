@@ -11,7 +11,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import './Forms.css';
 import Button from '@mui/material/Button';
-import { useSignIn } from 'react-auth-kit';
+import { useSignIn, authUserState } from 'react-auth-kit';
 
 
 
@@ -32,9 +32,11 @@ function App() {
   const signIn = useSignIn();
   
   const handleLogin = async (e) => {
-    e.preventDefault();
-    const data = [email, password];
-
+    // e.preventDefault();
+    const data = {email, password};
+    console.log(data)
+    const response = await axios.post('http://localhost:3003/users/login', data)
+    .catch(error => alert(error))
   //   if(signIn(
   //     {
   //         token: res.data.token,
@@ -43,23 +45,23 @@ function App() {
   //         authState: res.data.authUserState,
   //     }
   // )){
+  //   console.log(response)
   //     // Redirect or do-something
   // }else {
   //     //Throw error
+  //     console.log(error)
   // }
 
-    try {
-      const response = await axios.post('http://localhost:3002', data);
-      // .then(console.log(response))
-      // const signIn
-      console.log(response)
-      // signIn({
-      //   token: response.data
-      // })
+  //   try {
+  //     // .then(console.log(response))
+  //     // const signIn
+  //     console.log(response)
+  //     // signIn({
+  //     //   token: response.data
+  //     // })
     
-    } catch (error) {
-        console.log(error)
-    }
+  //   } catch (error) {
+  //   }
   };
 
 React.useEffect(() => {
