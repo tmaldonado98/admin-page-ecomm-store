@@ -4,17 +4,14 @@ import {useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
 import FilledInput from '@mui/material/FilledInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import './Forms.css';
 import Button from '@mui/material/Button';
-import { useSignIn, authUserState } from 'react-auth-kit';
-
-
-
+import { useNavigate } from 'react-router-dom';
+import { useSignIn} from 'react-auth-kit';
 
 function App() {
 
@@ -30,61 +27,38 @@ function App() {
   const [password, setPassword] = useState('');
 
   const signIn = useSignIn();
+
+  const navigate = useNavigate();
   
-  const handleLogin = async (e) => {
-    // e.preventDefault();
+  const handleLogin = async () => {
     const token = [];
     try {
       const data = {email, password};
-      console.log(data)
-      const response = await axios.post('http://localhost:3003/login', data)
+      const response = await axios.post('http://localhost:3003/login', data);
+      if(response.status === 200){
+        token.push(response.data.token)
+        signIn({
+          token: token[0],
+          expiresIn: 3600,
+          tokenType: 'Bearer',
+          authState: { email: data.email}
+        });
+        navigate('/OrderRegistry')
+
+      } else {
+        alert("The credentials you provided could not be authenticated.")
+
+      }
       
-      .then(res => token.push(res.data.token))
-      .then(res => signIn({
-        token: token[0],
-        expiresIn: 3600,
-        tokenType: 'Bearer',
-        authState: { email: data.email}
-      })
-      )
-      
-      .catch(error => alert(error))
+      // .then()
       
 
       
     } catch (error){
+      alert("The credentials you provided could not be authenticated.")
       console.log(error)
     }
-    //   if(signIn(
-  //     {
-  //         token: res.data.token,
-  //         expiresIn:res.data.expiresIn,
-  //         tokenType: "Bearer",
-  //         authState: res.data.authUserState,
-  //     }
-  // )){
-  //   console.log(response)
-  //     // Redirect or do-something
-  // }else {
-  //     //Throw error
-  //     console.log(error)
-  // }
-
-  //   try {
-  //     // .then(console.log(response))
-  //     // const signIn
-  //     console.log(response)
-  //     // signIn({
-  //     //   token: response.data
-  //     // })
-    
-  //   } catch (error) {
-  //   }
   };
-
-React.useEffect(() => {
-  console.log(email)
-}, [email])
 
   return (
   <div className="App">
@@ -130,9 +104,11 @@ React.useEffect(() => {
             />
       </div>
       <div className='buttons'>
-          <Button className='button' variant="outlined" size="large" onClick={handleLogin}>
-            Login
-          </Button>
+          {/* <Link to='/OrderRegistry'>
+          </Link> */}
+            <Button style={{marginTop: '10px'}} className='button' variant="outlined" size="large" onClick={handleLogin}>
+              Login
+            </Button>    
         </div>
               {/* <TextField
           error
@@ -158,15 +134,6 @@ React.useEffect(() => {
         
   </div>
 
-  // {/* <Routes>  */}
-      
-      
-  
-      
-
-  
-  // </Routes>
-  // </BrowserRouter>
   );
 }
 

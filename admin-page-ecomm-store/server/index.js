@@ -50,26 +50,25 @@ app.post('/login', async (req, res) => {
         
         // Check if the user exists
         if (results.length === 0) {
-              console.log(results)
+            //   alert('Invalid email or password');
             return res.status(401).send('Invalid email or password');
           }
       
           // Check if the password matches
-          console.log(results)
           const user = results[0];
-          console.log(user)
             const isMatch = await bcrypt.compare(password, user.password);
           if (password !== user.password) {
-              return res.status(401).send('Invalid email or password');
+                console.log('Invalid email or password')
+              return res.status(401).send('Invalid email or password'); 
             }
-            
-            // Generate a JWT token and sign it with a secret key
-            const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET);
-            
-            // Return the token in the response
-            res.send({ token });
-            console.log(token)
-      
+            else {
+                // Generate a JWT token and sign it with a secret key
+                const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET);
+                
+                // Return the token in the response
+                res.send({ token });      
+
+            }
     })
 
 });

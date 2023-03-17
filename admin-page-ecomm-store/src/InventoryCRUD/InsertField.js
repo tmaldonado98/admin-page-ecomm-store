@@ -302,7 +302,7 @@ export default function InsertField() {
                     <input onChange={handleInputChange} value={inputValues.medium} required={true} name='medium' type="text"/>
                     
                     <label for="price">Price (numbers only)</label>
-                    <input onChange={handleInputChange} value={inputValues.price} required={true} placeholder='ex: 20' name='price' inputMode='numeric' pattern="\d*" onKeyDown={onlyNumbers} />
+                    <input onChange={handleInputChange} value={inputValues.price} required={true} placeholder='ex: 20' name='price' inputMode='numeric' pattern="^\d+$"  onKeyDown={onlyNumbers} />
                     
                     <label for="prodkey">Write a product key in all lowercase or all uppercase. <br/> Recommended to assign one alphabetic integer per inventory item.<br/> For example: "one" for item 1, "two" for item 2, "three" for item 3, etc. </label>
                     <input required={true} value={inputValues.prodkey} onChange={handleInputChange} onKeyUp={handleKeyInput} name='prodkey' type="text" autoComplete='false'/>

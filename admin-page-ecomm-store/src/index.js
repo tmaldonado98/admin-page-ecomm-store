@@ -8,8 +8,9 @@ import OrderRegistry from './routes/OrderRegistry';
 import DemoDashboard from './routes/DemoDashboard';
 import ProdInventory from './routes/ProdInventory';
 import { useMemo } from 'react';
-import { AuthProvider } from 'react-auth-kit'
+import { AuthProvider, RequireAuth, useIsAuthenticated } from 'react-auth-kit'
 // import RouteComponent from './routes';
+// const isAuthenticated = useIsAuthenticated();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -22,9 +23,18 @@ root.render(
             <BrowserRouter>
                   <Routes>
                         <Route exact path='/' element={<App />}/>
-                        <Route path='/OrderRegistry' element={<OrderRegistry/>}/>
-                        <Route path='/DemoDashboard' element={<DemoDashboard/>}/>
-                        <Route path='/ProdInventory' element={<ProdInventory/>}/>
+                        <Route path='/OrderRegistry' element={
+                              <RequireAuth exact loginPath='/' authType='cookie' authName='_auth' cookieDomain={window.location.hostname} cookieSecure={false}>  
+                              {/* set cookieSecure to true in production */}
+                                    <OrderRegistry/>
+                              </RequireAuth>
+                        }></Route>
+
+                        <Route path='/ProdInventory' element={
+                              <RequireAuth exact loginPath='/'  authType='cookie' authName='_auth' cookieDomain={window.location.hostname} cookieSecure={false}>
+                                    <ProdInventory/>
+                              </RequireAuth>
+                        }></Route>
                         
                   </Routes>
                   

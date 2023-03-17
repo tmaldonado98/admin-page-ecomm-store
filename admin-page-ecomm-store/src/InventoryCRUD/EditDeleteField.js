@@ -98,7 +98,7 @@ const [savedStatus, setSavedStatus] = useState(false)
 
   function handleRemove(prodkey) {
 
-    console.log(prodkey)
+    // console.log(prodkey)
 
     const storage = getStorage();
     const fileRef = ref(storage, `images/${prodkey}`);
@@ -129,8 +129,8 @@ const [savedStatus, setSavedStatus] = useState(false)
         backgroundColor: 'darkred',
       }}
       >
-      <Button onClick={refreshRows}>Refresh Rows</Button>
-        {console.log(rows)}
+      <Button onClick={refreshRows} variant='contained' style={{width: '50%', margin: 'auto'}}>Refresh Rows</Button>
+        {/* {console.log(rows)} */}
             <table>
                 <thead>
                     <tr>
