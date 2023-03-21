@@ -1,3 +1,16 @@
+body {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.App {
+    height: 100vh;
+    background-color: #4cabff;
+    color: ivory;
+}
+
+
+
 #buttons {
     width: 25%;
     margin: 3rem auto;
@@ -7,7 +20,7 @@
 }
 
 #invalid-creds {
-    color: #b30000;
+    color: #fff;
     background-color: #8b000078;
     padding: 12px;
     font-size: 20px;

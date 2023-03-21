@@ -2,7 +2,7 @@ form {
     display: flex;
     flex-direction: column;
     width: 50%;
-    margin: 2rem auto;
+    margin: auto;
     text-align: center;
     gap: 2rem;
 }
@@ -12,13 +12,21 @@ form div {
     flex-direction: column;
     gap: 0.5rem;
 }
+/* 
+#filled-basic {
+    color: ivory !important;
+} */
+
 
 .MuiTextField-root, .MuiInputBase-root {
     /* width: 70% !important; */
     margin: auto !important;
+    color: ivory !important;
 }
 
-
-
-.button {
+#login:hover {
+    border: 1px solid ivory;
+    transition: 300ms ease-in-out;
+    background-color: none;
+    font-weight: bold;
 }

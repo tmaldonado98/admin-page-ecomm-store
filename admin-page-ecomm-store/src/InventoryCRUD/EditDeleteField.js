@@ -38,7 +38,7 @@ const [stateEditObj, setStateEditObj] = useState({
   invtype: '',
   author: '',
 });
-
+ 
 const [savedStatus, setSavedStatus] = useState(false)
 
   useEffect(()=> {
@@ -72,29 +72,22 @@ const [savedStatus, setSavedStatus] = useState(false)
   }
 
   function handleSave (){
-
+    const pattern = /^[0-9]*$/;
     let editObj = stateEditObj;
-
-    console.log(editObj)
-
-    Axios.post('http://localhost:3003/edit', editObj) 
-    .then(setEditingRow(null))
-    .then(alert('Your modifications have been saved.'))
-
-    setSavedStatus(!savedStatus)
+    
+    if(pattern.test(stateEditObj.price)){
+      // console.log(editObj)
+      Axios.post('http://localhost:3003/edit', editObj) 
+      .then(setEditingRow(null))
+      .then(alert('Your modifications have been saved.'))
+  
+      setSavedStatus(!savedStatus)
+    }
+    else {
+      alert('Price input field can take numbers only.')
+    }
   }
 
-  // const handleRemove = (prodkey) => {
-  //       const confirm = window.confirm('Are you sure?'); 
-   
-  //   if(confirm){
-  //     Axios.post('http://localhost:3003/edit', prodkey) 
-  //     .then(alert('Your item has been removed from the store inventory.'))
-  //     .catch(error => alert(error))
-  //   }
-  //   setSavedStatus(!savedStatus)
-  // }
-  // const confirm = window.confirm('Are you sure?'); 
 
   function handleRemove(prodkey) {
 

@@ -76,9 +76,12 @@ function App() {
       <div>
         <h1>Vea Collections - <br/> Administrative Control Panel</h1>
         <label>Admin User</label>
-        <TextField id="filled-basic adminname email" value={email} placeholder="Admin User" variant="filled" onChange={(e) => setEmail(e.target.value)}
+        <TextField id="filled-basic adminname email" value={email} 
+            placeholder="Admin User" variant="filled" 
+            onChange={(e) => setEmail(e.target.value)}
             autoComplete='false'
             autoSave='false'
+            style={{color:'ivory'}}
         />
         
       </div>
@@ -92,8 +95,9 @@ function App() {
               id="filled-adornment-password adminpass"
               type={showPassword ? 'text' : 'password'}
               placeholder="Admin Password"
+              style={{color:'ivory'}}
               endAdornment={
-                <InputAdornment position="end">
+                <InputAdornment position="end" style={{color:'ivory'}}>
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
@@ -108,7 +112,7 @@ function App() {
       </div>
       <div className='buttons'>
 
-            <Button style={{marginTop: '10px'}} className='button' variant="outlined" size="large" onClick={handleLogin}>
+            <Button style={{marginTop: '10px', color: 'ivory', backgroundColor:'#fffff02e', transition: '300ms ease-in-out'}} id='login' variant="outlined" size="large" onClick={handleLogin}>
               Login
             </Button>   
             <p hidden={invalidCreds} id='invalid-creds'>Invalid credentials. <br/> Enter the correct Admin email and password.</p>
