@@ -9,3 +9,12 @@ fieldset {
     flex-direction: column;
     gap: 1rem;
 }
+
+#regex-msg {
+    color: #b30000;
+    background-color: #8b000078;
+    padding: 12px;
+    font-size: 20px;
+    border-radius: 12px;
+    font-weight: bold;
+}

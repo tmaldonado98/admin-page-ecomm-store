@@ -5,3 +5,12 @@
     flex-direction: column;
     gap: 2rems;
 }
+
+#invalid-creds {
+    color: #b30000;
+    background-color: #8b000078;
+    padding: 12px;
+    font-size: 20px;
+    border-radius: 12px;
+    font-weight: bold;
+}

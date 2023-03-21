@@ -44,6 +44,21 @@ export default function InsertField() {
     const [storageRef, setStorageRef] = useState(null)
     const [isUploading, setIsUploading] = useState(false);
 
+    const [invalidStatus, setInvalidStatus] = useState(true); //SHOW MESSAGE FOR NUMBERS ONLY
+
+    const [inputValues, setInputValues] = useState({
+      name: '',
+      size: '',
+      medium: '',
+      price: '',
+      img: '',
+      prodkey: '',
+      stripeInvData: {type: 'Print to order'},
+      author: '',
+    });
+
+
+
     let imageSrc = null;
 
     function getFileInfo(event){
@@ -66,93 +81,10 @@ export default function InsertField() {
     
     let inputObject = {};
 
-    // async function insert(){
-    //     // inputObject.hasOwnProperty(`${ inputValues.prodkey}`)
-    //     if (ref(storage, `images/${inputValues.prodkey}`)) {
-    //         alert('Make sure you are creating a unique product key. Duplicates are not allowed.')
-    //         return false
-    //     } else {
-    //         setIsUploading(true);
-    //         await uploadBytes(storageRef, file)
-    //         setIsUploading(false)
-    //         await getDownloadURL(storageRef)
-    //         .then((url) => {
-    //             console.log(url)
-    //             imageSrc = url;
-    //             // setImageSource(url);
-    //             // console.log(imageSource)
-    //             // const img = document.getElementById('preview');
-    //             // img.setAttribute('src', url);
-    //             setKeyState('');
-    //         })
-                
-    //         // .then((snapshot) => {
-    //         //     // console.log('File uploaded successfully with name: ' + keyState);           
-    //         // })
-    //         .then(() => {
-    //             const input = document.getElementsByTagName("input");
-    
-    //             // let dynamicObjName = input['prodkey'].value;
-    //             let dynamicObjName = inputValues.prodkey;
-    //             //check: if inputObject already has inputValues.prodkey then return false
-    //         //    if(inputObject.hasOwnProperty(`${dynamicObjName}`)){
-    
-    //                inputObject = {
-    //                    [dynamicObjName]: {
-    //                        name: inputValues.name,
-    //                        size: inputValues.size,
-    //                        medium: inputValues.medium,
-        
-    //                        price: inputValues.price,
-    //                        // image: imageSource,
-    //                        image: imageSrc,
-    //                        prodkey: inputValues.prodkey,
-    //                        stripeInvData: inputValues.stripeInvData,
-    //                        // name: (input['name'].value),
-    //                        // size: (input['size'].value),
-    //                        // medium: (input['medium'].value),
-               
-    //                        // price: (input['price'].value),
-    //                        // // blob: (input['img'].value),
-    //                        // image: imageSource,
-    //                        // prodkey: (input['prodkey'].value)
-    //                    }
-    //                 }
-                
-                
-    
-    //                 console.log(inputObject)
-    //                 const dynObj = Object.keys(inputObject);
-    //                 // {headers: {'Content-Type': 'multipart/form-data'}}
-    //                 Axios.post('http://localhost:3003/api/insert', inputObject)
-    //                 .then(alert('Your item has been added to your inventory!'))
-    //                 .catch(error => alert(error+ "  Make sure you are creating a unique product key. Duplicates are not allowed."), input.value = '')
-    
-    //                 // const img = document.getElementById('preview');
-    //                 // img.setAttribute('src', null);
-    
-    //         })
-    
-    //         // })
-    //         .then(setInputValues({
-    //             name: '',
-    //             size: '',
-    //             medium: '',
-    //             price: '',
-    //             img: '',
-    //             prodkey: '',
-    //             stripeInvData: null,
-    //           })
-    //           )
-    //         .catch((error) => {
-    //            alert('Error uploading file', error);
-    //         })
-            
-    //     }
-        
-    // }
 
-    async function insert() {
+  async function insert() {
+    const pattern = /^[0-9]*$/;
+      if(pattern.test(inputValues.price)){
         const fileRef = ref(storage, `images/${inputValues.prodkey}`);
         const fileExists = await getMetadata(fileRef)
           .then(metadata => {
@@ -214,9 +146,30 @@ export default function InsertField() {
               author: '',
             }));
         }
+      } else {
+        setInvalidStatus(false);
+        setInputValues({
+          name: '',
+          size: '',
+          medium: '',
+          // price: '',
+          img: '',
+          prodkey: '',
+          stripeInvData: null,
+          author: null,
+        });
+        return false;
       }
-      
+    }
+    
+    useEffect(() => {
+      const pattern = /^[0-9]*$/;
+      if (pattern.test(inputValues.price)) {
+        setInvalidStatus(true);
+      }
+    }, [inputValues.price])
 
+    
     function handleKeyInput (e){
         // console.log(e.target.value);
         return setKeyState(e.target.value);
@@ -224,16 +177,6 @@ export default function InsertField() {
     
     const [status, setStatus] = useState(true)
 
-    const [inputValues, setInputValues] = useState({
-        name: '',
-        size: '',
-        medium: '',
-        price: '',
-        img: '',
-        prodkey: '',
-        stripeInvData: {type: 'Print to order'},
-        author: '',
-      });
     
       const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -266,6 +209,7 @@ export default function InsertField() {
         const validAuthor = inputValues.author !== '';
 
         setStatus(validName && validSize && validMedium && validPrice && validImg && validProdkey && validRadio && validAuthor ? false : true);
+        
       }, [inputValues]);
     
     function handleSubmit (){
@@ -330,18 +274,17 @@ export default function InsertField() {
                     </div>
                     <br/>
 
-                    <Button disabled={status} onClick={handleSubmit} variant='contained' >{isUploading == false ? 'Add Product' : 
-<>
-                                    <CircularProgress/>
-                                        <Typography variant="caption" component="div" color="text.secondary">
-                                            Uploading...
-                                        </Typography>
-                                        
-    
-</>                      }
-                      </Button>
+                    <Button disabled={status} onClick={handleSubmit} variant='contained' >{isUploading == false ? 'Add Product' 
+                    : 
+                    <>
+                      <CircularProgress/>
+                          <Typography variant="caption" component="div" color="text.secondary">
+                              Uploading...
+                          </Typography>        
+                    </>}
+                    </Button>
+                    <p hidden={invalidStatus} id='regex-msg'>Make sure that the price field is filled with numbers only.</p>
                     
-            {/* </div> */}
             </form>             
         </fieldset>
         </>

@@ -35,9 +35,9 @@ app.use(bodyparser.urlencoded({extended: true}))
 ///auth with table
 app.post('/login', async (req, res) => {
     const email = req.body.email;
-    console.log(email)
+    // console.log(email)
     const password = req.body.password;
-    console.log(password)
+    // console.log(password)
 
     // const hashedPassword = await bcrypt.hash(req.body.password, 10)
     // console.log(hashedPassword)

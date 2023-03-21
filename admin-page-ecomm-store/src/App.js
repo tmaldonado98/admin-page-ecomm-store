@@ -9,6 +9,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import './Forms.css';
+import './App.css';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import { useSignIn} from 'react-auth-kit';
@@ -25,6 +26,7 @@ function App() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [invalidCreds, setInvalidCreds] = useState(true)
 
   const signIn = useSignIn();
 
@@ -45,20 +47,21 @@ function App() {
         });
         navigate('/OrderRegistry')
 
-      } else {
-        alert("The credentials you provided could not be authenticated.")
-
-      }
-      
-      // .then()
-      
-
+      }    
       
     } catch (error){
-      alert("The credentials you provided could not be authenticated.")
+      // alert("The credentials you provided could not be authenticated.")
       console.log(error)
+      setInvalidCreds(false);
+
     }
   };
+
+  React.useEffect(() => {
+    if (password.length >= 5) {
+      setInvalidCreds(true)
+    }
+  }, [password])
 
   return (
   <div className="App">
@@ -104,34 +107,13 @@ function App() {
             />
       </div>
       <div className='buttons'>
-          {/* <Link to='/OrderRegistry'>
-          </Link> */}
+
             <Button style={{marginTop: '10px'}} className='button' variant="outlined" size="large" onClick={handleLogin}>
               Login
-            </Button>    
-        </div>
-              {/* <TextField
-          error
-          id="filled-error-helper-text"
-          label="Error"
-          defaultValue="Hello World"
-          helperText="Incorrect entry."
-          variant="filled"
-        /> */}
-      </Box>   
-          {/* <div id='buttons'>
-            <Link to="/OrderRegistry">
-              <LoginBtn />
-
-              </Link> */}
-              {/* instead of Link component, remove it and add a
-              conditional redirect to the orderregistry component
-              */}
-            {/* <Link to="/DemoDashboard">
-              <DemoLogin/>
-            </Link>
-          </div> */}
-        
+            </Button>   
+            <p hidden={invalidCreds} id='invalid-creds'>Invalid credentials. <br/> Enter the correct Admin email and password.</p>
+      </div>
+    </Box>          
   </div>
 
   );
