@@ -8,7 +8,6 @@ import { useMemo } from 'react';
 import { AuthProvider, RequireAuth, useIsAuthenticated } from 'react-auth-kit'
 // import RouteComponent from './routes';
 // const isAuthenticated = useIsAuthenticated();
-import { app } from './fbconfig';
 
 
 

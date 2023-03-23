@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button } from '@mui/material';
 import Nav from '../Nav';
-import InsertField from '../InventoryCRUD/InsertField';
-import EditDeleteField from '../InventoryCRUD/EditDeleteField';
+// import InsertField from '../InventoryCRUD/InsertField';
+import {InsertField, EditDeleteField} from '../InventoryCRUD/InsertField';
 import './ProdInventory.css';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';

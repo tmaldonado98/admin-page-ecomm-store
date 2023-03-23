@@ -1,17 +1,40 @@
 import { Button } from '@mui/material';
 import './InsertField.css';
+import './EditDeleteField.css';
 import Axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useState, useEffect } from 'react';
-import { getStorage, ref, uploadBytes, getDownloadURL, getMetadata } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, getMetadata, deleteObject } from "firebase/storage";
 // import firebase from "firebase/compat/app";
-// import { initializeApp } from "firebase/app";
-import {fbAuth, app, fbStorage, refLine, updBytes, dlUrl, meta} from '../fbconfig';
+import { initializeApp } from "firebase/app";
+// import {fbAuth, app, fbStorage, refLine, updBytes, dlUrl, meta} from '../fbconfig';
 
-// initFB;
+// console.log(process.env.REACT_APP_STORAGE_BUCKET)
+// const firebaseConfig = {
 
-export default function InsertField() {
+//   apiKey: process.env.REACT_APP_API_KEY,
+//   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+//   projectId: process.env.REACT_APP_PROJECT_ID,
+//   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+//   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+//   appId: process.env.REACT_APP_APP_ID,
+
+// };
+const firebaseConfig = {
+  apiKey: "AIzaSyDUE3zP0DGLEL1fSe9YBgPMjmNaY4n7wYY",
+  authDomain: "admin-page-vea-collections.firebaseapp.com",
+  projectId: "admin-page-vea-collections",
+  storageBucket: "admin-page-vea-collections.appspot.com",
+  messagingSenderId: "951901510055",
+  appId: "1:951901510055:web:2382e0060e5ac8f0ecbe82",
+  measurementID: "G-S37FFT9HJ3",
+};
+console.log(firebaseConfig)
+const app = initializeApp(firebaseConfig);
+
+export function InsertField() {
     const storage = getStorage(app);
 
     const [keyState, setKeyState] = useState('');
@@ -40,7 +63,6 @@ export default function InsertField() {
     function getFileInfo(event){
         setInputValues({ ...inputValues, img: 'ok' });
         setFile(event.target.files[0])
-        // file = event.target.files[0];
         // console.log(file)
     }
 
@@ -48,10 +70,10 @@ export default function InsertField() {
     useEffect(() => {
         console.log(file);
         imgName =  keyState;
-
+        console.log(imgName)
         // const storageRef = ref(storage, `images/${imgName}`);
         setStorageRef(ref(storage, `images/${imgName}`))
-        // console.log('storageRef state updated ' + storageRef)
+        console.log('storageRef state updated ' + storageRef)
         // console.log('name of image is '+ imgName)
     }, [file]);
     
@@ -266,3 +288,171 @@ export default function InsertField() {
         </>
     )
 }
+
+
+export function EditDeleteField(){
+  const storage = getStorage(app);
+  
+  const [rows, setRows] = useState(null);
+  
+  const [editable, setEditable] = useState(true);
+  
+  const [editingRow, setEditingRow] = useState(null);
+  
+  const [stateEditObj, setStateEditObj] = useState({
+    name: '',
+    size: '',
+    medium: '',
+    price: '',
+    prodkey: '',
+    invtype: '',
+    author: '',
+  });
+   
+  const [savedStatus, setSavedStatus] = useState(false)
+  
+    useEffect(()=> {
+      Axios.get('http://localhost:3003/getRows')
+      .then(result => setRows(result.data))
+      // .then(result => console.log(result.data))
+      // .then(console.log(rows))
+      .catch(error => alert(error))
+  
+    }, [savedStatus]);
+  
+    function handleEdit (prodkey){
+      setEditingRow(prodkey)
+  
+      // console.log(prodkey)
+      const theRow = rows.find(curIt => curIt.prodkey === prodkey)
+      console.log(theRow)
+        setStateEditObj({
+          name: theRow.name,
+          size: theRow.size,
+          medium: theRow.medium,
+          price: theRow.price,
+          prodkey: theRow.prodkey,
+          invtype: theRow.invtype,
+          author: theRow.author,
+        })
+      
+  
+      // console.log(stateEditObj)
+  
+    }
+  
+    function handleSave (){
+      const pattern = /^[0-9]*$/;
+      let editObj = stateEditObj;
+      
+      if(pattern.test(stateEditObj.price)){
+        // console.log(editObj)
+        Axios.post('http://localhost:3003/edit', editObj) 
+        .then(setEditingRow(null))
+        .then(alert('Your modifications have been saved.'))
+    
+        setSavedStatus(!savedStatus)
+      }
+      else {
+        alert('Price input field can take numbers only.')
+      }
+    }
+  
+  
+    function handleRemove(prodkey) {
+  
+      // console.log(prodkey)
+  
+      const fileRef = ref(storage, `images/${prodkey}`);
+  
+      const key = prodkey;
+      const confirm = window.confirm('Are you sure?'); 
+      if(confirm){
+        deleteObject(fileRef)
+        Axios.post('http://localhost:3003/deleteRow', key) 
+        .then(setSavedStatus(!savedStatus))
+        .then(alert('Your item has been removed from the store inventory.'))
+        .catch(error => alert(error))
+      }
+  
+    }
+  
+    function refreshRows(){
+      setSavedStatus(!savedStatus)
+    }
+  
+    return(
+      <Paper
+      sx={{
+        p: 2,
+        display: 'flex',
+          flexDirection: 'column',
+          height: 'auto',
+          backgroundColor: 'darkred',
+        }}
+        >
+        <Button onClick={refreshRows} variant='contained' style={{width: '50%', margin: 'auto'}}>Refresh Rows</Button>
+          {/* {console.log(rows)} */}
+              <table>
+                  <thead>
+                      <tr>
+                          <th>ID</th><th>Name</th><th>Size</th><th>Medium</th><th>Price</th><th>Image Source</th><th>Unique Key</th><th>Inv. Type</th><th>Author</th><th>Edit/Delete</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  {rows ? ( 
+                      
+                      <>
+                          {rows.map(item=> (
+                              <tr key={item.prodkey}>
+                                  <td>{item.id}</td>
+                                  <td>{editingRow === item.prodkey ? (<input type='text' name='name' disabled={false} defaultValue={item.name} onChange={e => setStateEditObj({...stateEditObj, name: e.target.value})}/>) : (item.name)}</td>
+                                  {/* <td>{item.size}</td>  */}
+                                  <td>{editingRow === item.prodkey ? (<input type='text' name='size' disabled={false} defaultValue={item.size} onChange={e => setStateEditObj({...stateEditObj, size: e.target.value})}/>) : (item.size)}</td>
+                                  {/* <td>{item.medium}</td> */}
+                                  <td>{editingRow === item.prodkey ? (<input type='text' name='medium' disabled={false} defaultValue={item.medium} onChange={e => setStateEditObj({...stateEditObj, medium: e.target.value})}/>) : (item.medium)}</td>
+                                  {/* <td>{item.price}</td> */}
+                                  <td>{editingRow === item.prodkey ? (<input type='text' inputMode='numeric' name='price' disabled={false} defaultValue={item.price} onChange={e => setStateEditObj({...stateEditObj, price: e.target.value})}/>) : ('$' + item.price + ' USD')}</td>
+                                  <td>{item.imgsrc}</td>
+                                  <td>{editingRow === item.prodkey ? (<input type='text' name='prodkey' disabled={false} defaultValue={item.prodkey} onChange={e => setStateEditObj({...stateEditObj, prodkey: e.target.value})}/>) : (item.prodkey)}</td>
+  
+                                  {/* <td>{item.prodkey}</td> */}
+                                  {/* <td>{item.invtype}</td> */}
+                                  <td>{editingRow === item.prodkey ? (<div>
+                                      <label for="infinite">Print to order (infinite)</label>
+                                      <input id='infinite'  onClick={e => setStateEditObj({...stateEditObj, invtype: 'Print to order'})} name='stripeInvData' type="radio"/>
+                                      <label for="finite">Original (finite)</label>
+                                      <input id='finite' onClick={e => setStateEditObj({...stateEditObj, invtype: 'Original'})} name='stripeInvData' type="radio"/>                                    
+                                    </div>
+                                  ) : (item.invtype)}</td>
+  
+                                  <td id='authorTd'>{editingRow === item.prodkey ? (<div>
+                                    <label for="veaWolf">Vea Wolf</label>
+                                    <input id='veaWolf'  onClick={e => setStateEditObj({...stateEditObj, author: 'Vea Wolf'})} name='author' type="radio"/> <br/><br/>
+                                    <label for="tmVea">T.M. Vea</label>
+                                    <input id='tmVea' onClick={e => setStateEditObj({...stateEditObj, author: 'T.M. Vea'})} name='author' type="radio"/>                                    
+                                  </div>
+                                ) : (item.author)}</td>
+  
+                                <td> {editingRow === item.prodkey ? (<div>
+                                  <Button onClick={handleSave}>Save</Button> <Button onClick={() => handleRemove(item.prodkey)}>Remove</Button></div>)
+                                 
+                                : 
+                                <div>{<Button onClick={()=> handleEdit(item.prodkey)}>Edit</Button>} <Button onClick={() => handleRemove(item.prodkey)}>Remove</Button></div>}
+                                </td>
+                              </tr>
+                          ))}
+                      </>)
+                 : (<div><p id='loading'>Loading...</p></div>)
+                }
+                  </tbody>
+              </table>
+  
+  
+  
+      </Paper>
+  
+  
+    )
+    
+  }
