@@ -4,7 +4,7 @@ import Axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { useState, useEffect } from 'react';
-// import { getStorage, ref, uploadBytes, getDownloadURL, getMetadata } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, getMetadata } from "firebase/storage";
 // import firebase from "firebase/compat/app";
 // import { initializeApp } from "firebase/app";
 import {fbAuth, app, fbStorage, refLine, updBytes, dlUrl, meta} from '../fbconfig';
@@ -12,7 +12,7 @@ import {fbAuth, app, fbStorage, refLine, updBytes, dlUrl, meta} from '../fbconfi
 // initFB;
 
 export default function InsertField() {
-    const storage = fbStorage;
+    const storage = getStorage(app);
 
     const [keyState, setKeyState] = useState('');
     const [file, setFile] = useState(null)
@@ -46,11 +46,11 @@ export default function InsertField() {
 
     let imgName = null;
     useEffect(() => {
-        // console.log(file);
+        console.log(file);
         imgName =  keyState;
 
         // const storageRef = ref(storage, `images/${imgName}`);
-        setStorageRef(refLine(storage, `images/${imgName}`))
+        setStorageRef(ref(storage, `images/${imgName}`))
         // console.log('storageRef state updated ' + storageRef)
         // console.log('name of image is '+ imgName)
     }, [file]);
@@ -61,8 +61,8 @@ export default function InsertField() {
   async function insert() {
     const pattern = /^[0-9]*$/;
       if(pattern.test(inputValues.price)){
-        const fileRef = refLine(storage, `images/${inputValues.prodkey}`);
-        const fileExists = await meta(fileRef)
+        const fileRef = ref(storage, `images/${inputValues.prodkey}`);
+        const fileExists = await getMetadata(fileRef)
           .then(metadata => {
             if (metadata) {
               return true;
@@ -83,9 +83,9 @@ export default function InsertField() {
         } else {
           // proceed with uploading the file
           setIsUploading(true);
-          await updBytes(storageRef, file);
+          await uploadBytes(storageRef, file);
           setIsUploading(false);
-          await dlUrl(storageRef)
+          await getDownloadURL(storageRef)
             .then((url) => {
               console.log(url);
               imageSrc = url;
