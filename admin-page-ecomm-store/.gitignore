@@ -25,3 +25,7 @@ yarn-error.log*
 .env
 
 index.js
+
+node_modules
+
+fbconfig.js

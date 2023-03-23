@@ -14,23 +14,18 @@ const user = process.env.DB_USER;
 const password = process.env.DB_PASSWORD;
 const database = process.env.DB_NAME;
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: host,
     user: user,
     password: password,
     database: database,
-    port: '3306'
+    // port: '3306',
 })
 // console.log(process.env)
 app.use(cors());
 app.use(express.json());
 app.use(bodyparser.urlencoded({extended: true}))
 
-// const users = [];
-
-// app.get('/login', (req, res) => {
-//     res.json(users)
-// })
 
 ///auth with table
 app.post('/login', async (req, res) => {
@@ -72,51 +67,6 @@ app.post('/login', async (req, res) => {
     })
 
 });
-
-
-
-// Login route
-// app.post('/users', async (request, response) => {
-//     try {
-//         // const salt = await bcrypt.genSalt()
-//         const hashedPassword = await bcrypt.hash(request.body.password, 10)
-//         // console.log(salt)
-//         // console.log(hashedPassword)
-        
-//         const user = {email: request.body.email, password: hashedPassword}
-//         users.push(user);
-//         response.status(201).send()
-//     } catch (error) {
-//         response.status(500).send();
-//     }
-    
-    
-//     // const email = request.body.email;
-//     // const psw = request.body.password;    
-
-//     // console.log(email, psw);
-// //////
-
-//     // // Generate a JWT
-//     // const token = jwt.sign({ email: email }, 'secret_key');
-
-//     // // Verify a JWT
-//     // try {
-//     // const decoded = jwt.verify(token, 'secret_key');
-//     // console.log(decoded.email);
-
-//     // res.json({message: 'Welcome', token: token})
-//     // } catch (err) {
-//     // console.error(err);
-//     // }
-
-// })
-
-// app.post('/users/login', async (request, response) => {
-//     const user = users.find(user => user.email === request.body.name);
-
-// });
-
 
 
 app.post('/api/insert', async (req, res) => {
@@ -161,7 +111,7 @@ app.post('/api/insert', async (req, res) => {
 
     }
     
-    const insert = 'INSERT INTO inventory (name, size, medium, price, imgsrc, prodkey, invtype, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const insert = 'INSERT INTO inventory_table (name, size, medium, price, imgsrc, prodkey, invtype, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     db.query(insert, [name, size, medium, price, image, prodkey, stripeInvDataForMysql, author], (err, result) => {
         if (err) {
             console.log(err)
@@ -174,7 +124,7 @@ app.post('/api/insert', async (req, res) => {
 });
 
 app.get('/getRows', (request, response) => {
-    const select = 'SELECT * FROM inventory';
+    const select = 'SELECT * FROM inventory_table';
     db.query(select, (err, resu) => {
         if (err) {console.log(err)}
         // console.log(resu);
@@ -261,7 +211,7 @@ app.post('/edit', async (req, response) => {
         .catch(error => console.log(error))
     }
        
-    const edit = `UPDATE inventory SET name = ?, size = ?, medium = ?, price = ?, prodkey = ?, invtype = ?, author = ?  WHERE prodkey = ?`
+    const edit = `UPDATE inventory_table SET name = ?, size = ?, medium = ?, price = ?, prodkey = ?, invtype = ?, author = ?  WHERE prodkey = ?`
     db.query(edit, [name, size, medium, price, prodkey, stripeInvData, author, prodkey], (err, resu) => {
         if (err) {
             console.log(err)
@@ -279,7 +229,7 @@ app.post('/deleteRow', (requ, respo) => {
     const prodkey = Object.keys(requ.body)[0]
     console.log(prodkey)
 
-    const deleteRow = `DELETE FROM inventory WHERE prodkey = ?`;
+    const deleteRow = `DELETE FROM inventory_table WHERE prodkey = ?`;
     db.query(deleteRow, [prodkey], (err, respo) => {
         if (err) {
             console.log(err)
@@ -337,8 +287,8 @@ const port = 3003;
 
 app.listen(port, () => {
     console.log('running on port ' + port)
-    db.connect( function (err){
-        if(err) throw err;
-        console.log('database connected')
-    })
+    // db.connect( function (err){
+    //     if(err) throw err;
+    //     console.log('database connected')
+    // })
 })

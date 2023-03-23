@@ -1,42 +1,18 @@
-// import dotenv from 'dotenv';
-// dotenv.config();
 import { Button } from '@mui/material';
 import './InsertField.css';
 import Axios from 'axios';
-import { initializeApp } from 'firebase/app';
-import CircularProgress, {
-    CircularProgressProps,
-} from '@mui/material/CircularProgress';
-  import Typography from '@mui/material/Typography';
-  import Box from '@mui/material/Box';
-  import Dialog from '@mui/material/Dialog';
-  
-  import { useState, useEffect } from 'react';
-  import { display } from '@mui/system';
-  import { getStorage, ref, uploadBytes, getDownloadURL, getMetadata } from "firebase/storage";
-//   require('dotenv').config();
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+import { useState, useEffect } from 'react';
+// import { getStorage, ref, uploadBytes, getDownloadURL, getMetadata } from "firebase/storage";
+// import firebase from "firebase/compat/app";
+// import { initializeApp } from "firebase/app";
+import {fbAuth, initFB, fbStorage, refLine, updBytes, dlUrl, meta} from '../fbconfig';
 
-function onlyNumbers(e){
-    if (e.keyCode >= 65 && e.keyCode <= 90) {
-        return false;
-    }
-    // return true;
-}
-
-const firebaseConfig = {
-   // your Firebase app configuration object
-   apiKey: process.env.API_KEY ,
-   authDomain: process.env.AUTH_DOMAIN,
-   projectId: process.env.PROJECT_ID,
-   storageBucket: "vea-collections.appspot.com", //process.env.STORAGE_BUCKET,
-   messagingSenderId: process.env.MESSAGING_SENDER_ID,
-   appId: process.env.APP_ID,
-   measurementId: process.env.MEASUREMENT_ID
- };
-const firebaseApp = initializeApp(firebaseConfig);
+// initFB;
 
 export default function InsertField() {
-    const storage = getStorage(firebaseApp);
+    const storage = fbStorage;
 
     const [keyState, setKeyState] = useState('');
     const [file, setFile] = useState(null)
@@ -74,7 +50,7 @@ export default function InsertField() {
         imgName =  keyState;
 
         // const storageRef = ref(storage, `images/${imgName}`);
-        setStorageRef(ref(storage, `images/${imgName}`))
+        setStorageRef(refLine(storage, `images/${imgName}`))
         // console.log('storageRef state updated ' + storageRef)
         // console.log('name of image is '+ imgName)
     }, [file]);
@@ -85,8 +61,8 @@ export default function InsertField() {
   async function insert() {
     const pattern = /^[0-9]*$/;
       if(pattern.test(inputValues.price)){
-        const fileRef = ref(storage, `images/${inputValues.prodkey}`);
-        const fileExists = await getMetadata(fileRef)
+        const fileRef = refLine(storage, `images/${inputValues.prodkey}`);
+        const fileExists = await meta(fileRef)
           .then(metadata => {
             if (metadata) {
               return true;
@@ -107,9 +83,9 @@ export default function InsertField() {
         } else {
           // proceed with uploading the file
           setIsUploading(true);
-          await uploadBytes(storageRef, file);
+          await updBytes(storageRef, file);
           setIsUploading(false);
-          await getDownloadURL(storageRef)
+          await dlUrl(storageRef)
             .then((url) => {
               console.log(url);
               imageSrc = url;
@@ -246,7 +222,7 @@ export default function InsertField() {
                     <input onChange={handleInputChange} value={inputValues.medium} required={true} name='medium' type="text"/>
                     
                     <label for="price">Price (numbers only)</label>
-                    <input onChange={handleInputChange} value={inputValues.price} required={true} placeholder='ex: 20' name='price' inputMode='numeric' pattern="^\d+$"  onKeyDown={onlyNumbers} />
+                    <input onChange={handleInputChange} value={inputValues.price} required={true} placeholder='ex: 20' name='price' inputMode='numeric' />
                     
                     <label for="prodkey">Write a product key in all lowercase or all uppercase. <br/> Recommended to assign one alphabetic integer per inventory item.<br/> For example: "one" for item 1, "two" for item 2, "three" for item 3, etc. </label>
                     <input required={true} value={inputValues.prodkey} onChange={handleInputChange} onKeyUp={handleKeyInput} name='prodkey' type="text" autoComplete='false'/>
