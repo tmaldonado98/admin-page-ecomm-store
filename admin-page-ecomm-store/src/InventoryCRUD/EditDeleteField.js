@@ -5,23 +5,24 @@ import Paper from '@mui/material/Paper';
 import { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { Button } from '@mui/material';
-import { initializeApp } from 'firebase/app';
-import { getStorage, ref, deleteObject} from "firebase/storage";
+// import { initializeApp } from 'firebase/app';
+// import { getStorage, ref, deleteObject} from "firebase/storage";
+import { fbStorage, refLine, deleteObj } from '../fbconfig';
 
-const firebaseConfig = {
-  // your Firebase app configuration object
-  apiKey: process.env.API_KEY ,
-  authDomain: process.env.AUTH_DOMAIN,
-  projectId: process.env.PROJECT_ID,
-  storageBucket: "vea-collections.appspot.com", //process.env.STORAGE_BUCKET,
-  messagingSenderId: process.env.MESSAGING_SENDER_ID,
-  appId: process.env.APP_ID,
-  measurementId: process.env.MEASUREMENT_ID
-};
-const firebaseApp = initializeApp(firebaseConfig);
+// const firebaseConfig = {
+//   // your Firebase app configuration object
+//   apiKey: process.env.API_KEY ,
+//   authDomain: process.env.AUTH_DOMAIN,
+//   projectId: process.env.PROJECT_ID,
+//   storageBucket: "vea-collections.appspot.com", //process.env.STORAGE_BUCKET,
+//   messagingSenderId: process.env.MESSAGING_SENDER_ID,
+//   appId: process.env.APP_ID,
+//   measurementId: process.env.MEASUREMENT_ID
+// };
+// const firebaseApp = initializeApp(firebaseConfig);
 
 export default function EditDeleteField(){
-const storage = getStorage(firebaseApp);
+const storage = fbStorage;
 
 const [rows, setRows] = useState(null);
 
@@ -93,13 +94,12 @@ const [savedStatus, setSavedStatus] = useState(false)
 
     // console.log(prodkey)
 
-    const storage = getStorage();
-    const fileRef = ref(storage, `images/${prodkey}`);
+    const fileRef = refLine(storage, `images/${prodkey}`);
 
     const key = prodkey;
     const confirm = window.confirm('Are you sure?'); 
     if(confirm){
-      deleteObject(fileRef)
+      deleteObj(fileRef)
       Axios.post('http://localhost:3003/deleteRow', key) 
       .then(setSavedStatus(!savedStatus))
       .then(alert('Your item has been removed from the store inventory.'))

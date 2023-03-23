@@ -4,6 +4,7 @@ const bodyparser = require('body-parser');
 const app = express();
 const cors = require('cors');
 const mysql = require('mysql2');
+// promise-
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
 const jwt = require('jsonwebtoken');
@@ -13,15 +14,16 @@ const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
 const password = process.env.DB_PASSWORD;
 const database = process.env.DB_NAME;
+const socketPath = process.env.DB_SOCKET_PATH;
 
-const db = mysql.createPool({
+const db = mysql.createConnection({
     host: host,
     user: user,
     password: password,
     database: database,
-    // port: '3306',
 })
-// console.log(process.env)
+
+
 app.use(cors());
 app.use(express.json());
 app.use(bodyparser.urlencoded({extended: true}))
@@ -30,16 +32,15 @@ app.use(bodyparser.urlencoded({extended: true}))
 ///auth with table
 app.post('/login', async (req, res) => {
     const email = req.body.email;
-    // console.log(email)
     const password = req.body.password;
-    // console.log(password)
 
     // const hashedPassword = await bcrypt.hash(req.body.password, 10)
     // console.log(hashedPassword)
 
-    db.query('SELECT * FROM admin WHERE email = ?', [email], async (error, results) => {
+    db.query('SELECT * FROM admin_table WHERE email = ?', [email], async (error, results) => {
         if (error) {
             console.error(error);
+            console.log('this error')
             return res.status(500).send('Internal server error');
         }
         
@@ -288,7 +289,7 @@ const port = 3003;
 app.listen(port, () => {
     console.log('running on port ' + port)
     // db.connect( function (err){
-    //     if(err) throw err;
+    //      if(err) throw err;
     //     console.log('database connected')
     // })
 })

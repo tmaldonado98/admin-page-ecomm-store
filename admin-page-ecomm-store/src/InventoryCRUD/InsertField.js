@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 // import { getStorage, ref, uploadBytes, getDownloadURL, getMetadata } from "firebase/storage";
 // import firebase from "firebase/compat/app";
 // import { initializeApp } from "firebase/app";
-import {fbAuth, initFB, fbStorage, refLine, updBytes, dlUrl, meta} from '../fbconfig';
+import {fbAuth, app, fbStorage, refLine, updBytes, dlUrl, meta} from '../fbconfig';
 
 // initFB;
 
@@ -46,7 +46,7 @@ export default function InsertField() {
 
     let imgName = null;
     useEffect(() => {
-        console.log(file);
+        // console.log(file);
         imgName =  keyState;
 
         // const storageRef = ref(storage, `images/${imgName}`);
