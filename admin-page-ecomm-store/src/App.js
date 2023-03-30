@@ -34,14 +34,15 @@ function App() {
   
   const handleLogin = async () => {
     const token = [];
-    try {
-      const data = {email, password};
-      console.log(data);
-      const response = await axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/login', data)
-        .then(response => console.log(response))
 
-      if(response.status === 200){
-        console.log(response.data, response)
+    if (email === '' || password === '') {
+      setInvalidCreds(false);
+    }
+    // try {
+      const data = {email, password};
+      // console.log(data);
+      const response = await axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/login', data)
+        if(response.status === 200){
         token.push(response.data.token)
         signIn({
           token: token[0],
@@ -51,14 +52,15 @@ function App() {
         });
         navigate('/OrderRegistry')
 
-      }    
+      } else if (response.status == 500 || response.status == 401){
+        console.log(response)
+        setInvalidCreds(false);
+      }
       
-    } catch (error){
+    // } catch (error){
       // alert("The credentials you provided could not be authenticated.")
-      console.log(error)
-      setInvalidCreds(false);
 
-    }
+    // }
   };
 
   React.useEffect(() => {
