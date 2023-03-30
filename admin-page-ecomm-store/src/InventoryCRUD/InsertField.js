@@ -9,29 +9,8 @@ import { useState, useEffect } from 'react';
 import { getStorage, ref, uploadBytes, getDownloadURL, getMetadata, deleteObject } from "firebase/storage";
 // import firebase from "firebase/compat/app";
 import { initializeApp } from "firebase/app";
-// import {fbAuth, app, fbStorage, refLine, updBytes, dlUrl, meta} from '../fbconfig';
+import firebaseConfig from '../fbconfig';
 
-// console.log(process.env.REACT_APP_STORAGE_BUCKET)
-// const firebaseConfig = {
-
-//   apiKey: process.env.REACT_APP_API_KEY,
-//   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-//   projectId: process.env.REACT_APP_PROJECT_ID,
-//   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-//   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-//   appId: process.env.REACT_APP_APP_ID,
-
-// };
-const firebaseConfig = {
-  apiKey: "AIzaSyDUE3zP0DGLEL1fSe9YBgPMjmNaY4n7wYY",
-  authDomain: "admin-page-vea-collections.firebaseapp.com",
-  projectId: "admin-page-vea-collections",
-  storageBucket: "admin-page-vea-collections.appspot.com",
-  messagingSenderId: "951901510055",
-  appId: "1:951901510055:web:2382e0060e5ac8f0ecbe82",
-  measurementID: "G-S37FFT9HJ3",
-};
-console.log(firebaseConfig)
 const app = initializeApp(firebaseConfig);
 
 export function InsertField() {
@@ -68,12 +47,12 @@ export function InsertField() {
 
     let imgName = null;
     useEffect(() => {
-        console.log(file);
+        // console.log(file);
         imgName =  keyState;
-        console.log(imgName)
+        // console.log(imgName)
         // const storageRef = ref(storage, `images/${imgName}`);
-        setStorageRef(ref(storage, `images/${imgName}`))
-        console.log('storageRef state updated ' + storageRef)
+        // setStorageRef(ref(storage, `images/${imgName}`))
+        // console.log('storageRef state updated ' + storageRef)
         // console.log('name of image is '+ imgName)
     }, [file]);
     
@@ -128,8 +107,8 @@ export function InsertField() {
                   author: inputValues.author,
                 }
               };
-              console.log(inputObject);
-              Axios.post('http://localhost:3003/api/insert', inputObject)
+              // console.log(inputObject);
+              Axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/insert', inputObject)
                 .then(alert('Your item has been added to your inventory!'))
                 .catch(error => alert(error + "  Make sure you are creating a unique product key. Duplicates are not allowed."));
             })
@@ -312,7 +291,7 @@ export function EditDeleteField(){
   const [savedStatus, setSavedStatus] = useState(false)
   
     useEffect(()=> {
-      Axios.get('http://localhost:3003/getRows')
+      Axios.get('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/getRows')
       .then(result => setRows(result.data))
       // .then(result => console.log(result.data))
       // .then(console.log(rows))
@@ -325,7 +304,7 @@ export function EditDeleteField(){
   
       // console.log(prodkey)
       const theRow = rows.find(curIt => curIt.prodkey === prodkey)
-      console.log(theRow)
+      // console.log(theRow)
         setStateEditObj({
           name: theRow.name,
           size: theRow.size,
@@ -347,7 +326,7 @@ export function EditDeleteField(){
       
       if(pattern.test(stateEditObj.price)){
         // console.log(editObj)
-        Axios.post('http://localhost:3003/edit', editObj) 
+        Axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/edit', editObj) 
         .then(setEditingRow(null))
         .then(alert('Your modifications have been saved.'))
     
@@ -369,7 +348,7 @@ export function EditDeleteField(){
       const confirm = window.confirm('Are you sure?'); 
       if(confirm){
         deleteObject(fileRef)
-        Axios.post('http://localhost:3003/deleteRow', key) 
+        Axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/deleteRow', key) 
         .then(setSavedStatus(!savedStatus))
         .then(alert('Your item has been removed from the store inventory.'))
         .catch(error => alert(error))

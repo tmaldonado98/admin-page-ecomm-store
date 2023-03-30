@@ -107,7 +107,7 @@ function DashboardContent() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    Axios.get('http://localhost:3003/getBalance')
+    Axios.get('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/getBalance')
     .then(response => {
       setTransactions(response.data.data);
     })

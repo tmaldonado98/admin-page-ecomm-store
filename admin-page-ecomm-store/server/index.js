@@ -3,9 +3,8 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const app = express();
 const cors = require('cors');
-const mysql = require('mysql2');
-// promise-
-const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
+const mysql = require('mysql2/promise');
+const stripe = require('stripe')(process.env.SPK);
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -14,15 +13,17 @@ const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
 const password = process.env.DB_PASSWORD;
 const database = process.env.DB_NAME;
-const socketPath = process.env.DB_SOCKET_PATH;
+const socketPath = process.env.INSTANCE_UNIX_SOCKET;
+const port = process.env.DB_PORT;
 
 const db = mysql.createConnection({
-    host: host,
+    // host: host,
     user: user,
     password: password,
     database: database,
+    socketPath: socketPath,
+    port: port,
 })
-
 
 app.use(cors());
 app.use(express.json());
@@ -70,7 +71,7 @@ app.post('/login', async (req, res) => {
 });
 
 
-app.post('/api/insert', async (req, res) => {
+app.post('/insert', async (req, res) => {
 
     const reference = req.body;
     const skipDynObj = Object.values(reference)
@@ -153,7 +154,6 @@ app.post('/edit', async (req, response) => {
     console.log(stripeInvData)
 
     async function updateProdAndPrice() {
-        ///UPDATE PRODUCT + PRICE TO REFLECT ADMIN TABLE EDIT
         let productId = '';
 
         await stripe.products.list()
@@ -191,23 +191,14 @@ app.post('/edit', async (req, response) => {
             // console.log(curIt);
             const priceToUpd = curIt.data.find(price => price.product === productId)
             console.log(priceToUpd);
-        
-            // const price = stripe.prices.retrieve(
-            //     priceToUpd.id
-            
-            //   )
-            
 
-            // if (priceToUpd) {
-                    const updatePrice = stripe.prices.update(
-                        priceToUpd.id,
-                        {
-                            active: false
-                        }
-                    )
-                // console.log(updatePrice)
-            // }
-        
+            const updatePrice = stripe.prices.update(
+                priceToUpd.id,
+                {
+                    active: false
+                }
+            )
+
         })
         .catch(error => console.log(error))
     }
@@ -284,12 +275,14 @@ app.get('/getBalance', async (request, response) => {
 })
 
 
-const port = 3003;
+// const port = 3003;
 
-app.listen(port, () => {
-    console.log('running on port ' + port)
-    // db.connect( function (err){
-    //      if(err) throw err;
-    //     console.log('database connected')
-    // })
-})
+// app.listen(port, () => {
+//     console.log('running on port ' + port)
+//     db.connect( function (err){
+//          if(err) throw err;
+//         console.log('database connected')
+//     })
+// })
+
+exports.admApp = functions.https.onRequest(app);

@@ -36,8 +36,12 @@ function App() {
     const token = [];
     try {
       const data = {email, password};
-      const response = await axios.post('http://localhost:3003/login', data);
+      console.log(data);
+      const response = await axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/login', data)
+        .then(response => console.log(response))
+
       if(response.status === 200){
+        console.log(response.data, response)
         token.push(response.data.token)
         signIn({
           token: token[0],

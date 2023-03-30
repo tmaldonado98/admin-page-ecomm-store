@@ -17,20 +17,18 @@ root.render(
       <AuthProvider authType = {'cookie'}
             authName={'_auth'}
             cookieDomain={window.location.hostname}
-            cookieSecure={false}> 
-            {/* set cookieSecure to this when in production-> window.location.protocol === "https:" */}
+            cookieSecure={window.location.protocol === "https:"}> 
             <BrowserRouter>
                   <Routes>
                         <Route exact path='/' element={<App />}/>
                         <Route path='/OrderRegistry' element={
-                              <RequireAuth exact loginPath='/' authType='cookie' authName='_auth' cookieDomain={window.location.hostname} cookieSecure={false}>  
-                              {/* set cookieSecure to true in production */}
+                              <RequireAuth exact loginPath='/' authType='cookie' authName='_auth' cookieDomain={window.location.hostname} cookieSecure={true}>  
                                     <OrderRegistry/>
                               </RequireAuth>
                         }></Route>
 
                         <Route path='/ProdInventory' element={
-                              <RequireAuth exact loginPath='/'  authType='cookie' authName='_auth' cookieDomain={window.location.hostname} cookieSecure={false}>
+                              <RequireAuth exact loginPath='/'  authType='cookie' authName='_auth' cookieDomain={window.location.hostname} cookieSecure={true}>
                                     <ProdInventory/>
                               </RequireAuth>
                         }></Route>
