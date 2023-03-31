@@ -15,7 +15,7 @@ const app = initializeApp(firebaseConfig);
 
 export function InsertField() {
     const storage = getStorage(app);
-    console.log(storage);
+    // console.log(storage);
 
     const [keyState, setKeyState] = useState('');
     const [file, setFile] = useState(null)
@@ -47,15 +47,14 @@ export function InsertField() {
 
     function getFileInfo(event){
         setInputValues({ ...inputValues, img: 'ok' });
-        console.log(event.target.files[0], event.target.files)
+        console.log(event.target.files[0])
         setFile(event.target.files[0])
         // setFile(event.target.files)
-        console.log(file)
     }
 
     let imgName = null;
     useEffect(() => {
-        console.log(file);
+        // console.log(file);
         imgName =  keyState;
         // console.log(imgName)
         // const storageRef = ref(storage, `images/${imgName}`);
@@ -70,21 +69,23 @@ export function InsertField() {
     async function insert() {
       const pattern = /^[0-9]*$/;
       if(pattern.test(inputValues.price)){
-        const fileRef = storageRef.path_; ////test out tomorrow
+        // console.log(storageRef);
+        const fileRef = storageRef; 
         // ref(storage, `images/${inputValues.prodkey}`);
-        console.log(fileRef)
+        // console.log(fileRef)
         const fileExists = await getMetadata(fileRef)
-        .then(metadata => {
-          if (metadata) {
-            return true;
-          } else {
-            return false;
-          }
-        })
-        .catch(error => {
-          console.log(error + ' - storage/object-not-found');
-          return error;
-        });
+          .then(metadata => {
+            if (metadata) {
+              console.log('metadata is true')
+              return true;
+            } else {
+              return false;
+            }
+          })
+          // .catch(error => {
+          //   console.log(error + ' - storage/object-not-found');
+          //   // return false;
+          // });
       
         if (fileExists) {
           alert('Make sure you are creating a unique product key. Duplicates are not allowed.');
@@ -92,12 +93,12 @@ export function InsertField() {
         } else {
           // proceed with uploading the file
           setIsUploading(true);
-          console.log(storageRef, file);
-          await uploadBytes(storageRef, file);
+          // console.log(storageRef, file); 
+          await uploadBytes(storageRef, file); 
           setIsUploading(false);
-          const url = await getDownloadURL(storageRef)
-            
-          console.log(url);
+          const url = await getDownloadURL(storageRef) 
+          
+          // console.log(url);
           imageSrc = url;
           setKeyState('');
 
@@ -282,6 +283,7 @@ export function InsertField() {
                           </Typography>        
                     </>}
                     </Button>
+                    <p>*Product key duplicates not allowed</p>
                     <p hidden={invalidStatus} id='regex-msg'>Make sure that the price field is filled with numbers only.</p>
                     
             </form>             
