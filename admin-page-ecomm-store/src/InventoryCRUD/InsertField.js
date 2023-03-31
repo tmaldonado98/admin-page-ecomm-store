@@ -15,6 +15,7 @@ const app = initializeApp(firebaseConfig);
 
 export function InsertField() {
     const storage = getStorage(app);
+    console.log(storage);
 
     const [keyState, setKeyState] = useState('');
     const [file, setFile] = useState(null)
@@ -35,23 +36,30 @@ export function InsertField() {
       author: '',
     });
 
-
+    const [savedStatus, setSavedStatus] = useState(false);
 
     let imageSrc = null;
 
+
+    //////////////////////
+
+
+
     function getFileInfo(event){
         setInputValues({ ...inputValues, img: 'ok' });
+        console.log(event.target.files[0], event.target.files)
         setFile(event.target.files[0])
-        // console.log(file)
+        // setFile(event.target.files)
+        console.log(file)
     }
 
     let imgName = null;
     useEffect(() => {
-        // console.log(file);
+        console.log(file);
         imgName =  keyState;
         // console.log(imgName)
         // const storageRef = ref(storage, `images/${imgName}`);
-        // setStorageRef(ref(storage, `images/${imgName}`))
+        setStorageRef(ref(storage, `images/${imgName}`))
         // console.log('storageRef state updated ' + storageRef)
         // console.log('name of image is '+ imgName)
     }, [file]);
@@ -59,24 +67,24 @@ export function InsertField() {
     let inputObject = {};
 
 
-  async function insert() {
-    const pattern = /^[0-9]*$/;
+    async function insert() {
+      const pattern = /^[0-9]*$/;
       if(pattern.test(inputValues.price)){
-        const fileRef = ref(storage, `images/${inputValues.prodkey}`);
+        const fileRef = storageRef.path_; ////test out tomorrow
+        // ref(storage, `images/${inputValues.prodkey}`);
+        console.log(fileRef)
         const fileExists = await getMetadata(fileRef)
-          .then(metadata => {
-            if (metadata) {
-              return true;
-            } else {
-              return false;
-            }
-          })
-          .catch(error => {
-            if (error.code === 'storage/object-not-found') {
-              return false;
-            }
-            console.error(error);
-          });
+        .then(metadata => {
+          if (metadata) {
+            return true;
+          } else {
+            return false;
+          }
+        })
+        .catch(error => {
+          console.log(error + ' - storage/object-not-found');
+          return error;
+        });
       
         if (fileExists) {
           alert('Make sure you are creating a unique product key. Duplicates are not allowed.');
@@ -84,35 +92,42 @@ export function InsertField() {
         } else {
           // proceed with uploading the file
           setIsUploading(true);
+          console.log(storageRef, file);
           await uploadBytes(storageRef, file);
           setIsUploading(false);
-          await getDownloadURL(storageRef)
-            .then((url) => {
-              console.log(url);
-              imageSrc = url;
-              setKeyState('');
-            })
-            .then(() => {
-              // Insert the data into the database
-              const dynamicObjName = inputValues.prodkey;
-              inputObject = {
-                [dynamicObjName]: {
-                  name: inputValues.name,
-                  size: inputValues.size,
-                  medium: inputValues.medium,
-                  price: inputValues.price,
-                  image: imageSrc,
-                  prodkey: inputValues.prodkey,
-                  stripeInvData: inputValues.stripeInvData,
-                  author: inputValues.author,
-                }
-              };
-              // console.log(inputObject);
-              Axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/insert', inputObject)
-                .then(alert('Your item has been added to your inventory!'))
-                .catch(error => alert(error + "  Make sure you are creating a unique product key. Duplicates are not allowed."));
-            })
-            .then(setInputValues({
+          const url = await getDownloadURL(storageRef)
+            
+          console.log(url);
+          imageSrc = url;
+          setKeyState('');
+
+          // Insert the data into the database
+          const dynamicObjName = inputValues.prodkey;
+          inputObject = {
+            [dynamicObjName]: {
+              name: inputValues.name,
+              size: inputValues.size,
+              medium: inputValues.medium,
+              price: inputValues.price,
+              image: imageSrc,
+              prodkey: inputValues.prodkey,
+              stripeInvData: inputValues.stripeInvData,
+              author: inputValues.author,
+            }
+          };
+
+          try {
+            // console.log(inputObject);
+            const insertRes = await Axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/insert', inputObject)
+            if(insertRes.status === 200){
+              alert('Your item has been added to your inventory!')
+              setSavedStatus(!savedStatus); //this line refreshes the rows in the table
+            }
+            else if (insertRes.status == 500){
+              alert("Make sure you are creating a unique product key. Duplicates are not allowed.")
+            }
+                 
+            setInputValues({
               name: '',
               size: '',
               medium: '',
@@ -121,9 +136,16 @@ export function InsertField() {
               prodkey: '',
               stripeInvData: '',
               author: '',
-            }));
+            });
+            
+          } catch (error) {
+            console.error(error);
+            return false;
+          }
+        
         }
-      } else {
+
+      } else {  //condition for if input text fails regex pattern
         setInvalidStatus(false);
         setInputValues({
           name: '',
@@ -229,7 +251,7 @@ export function InsertField() {
                     <input required={true} value={inputValues.prodkey} onChange={handleInputChange} onKeyUp={handleKeyInput} name='prodkey' type="text" autoComplete='false'/>
 
                     <label for="img">Image File</label>
-                    <input required={true} on onChange={getFileInfo} name='img' type="file" multiple="false" accept="image/*" />
+                    <input required={true} onChange={getFileInfo} name='img' type="file" multiple="false" accept="image/*" />
                     
                     <div>
                         <p>Set whether item has finite quantity or infinite</p>
@@ -287,14 +309,13 @@ export function EditDeleteField(){
     invtype: '',
     author: '',
   });
-   
-  const [savedStatus, setSavedStatus] = useState(false)
-  
+     
+  const [savedStatus, setSavedStatus] = useState(false);
+
+
     useEffect(()=> {
       Axios.get('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/getRows')
       .then(result => setRows(result.data))
-      // .then(result => console.log(result.data))
-      // .then(console.log(rows))
       .catch(error => alert(error))
   
     }, [savedStatus]);
