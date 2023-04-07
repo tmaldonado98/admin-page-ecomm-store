@@ -49,7 +49,6 @@ export function InsertField() {
         setInputValues({ ...inputValues, img: 'ok' });
         console.log(event.target.files[0])
         setFile(event.target.files[0])
-        // setFile(event.target.files)
     }
 
     let imgName = null;
@@ -70,96 +69,153 @@ export function InsertField() {
       const pattern = /^[0-9]*$/;
       if(pattern.test(inputValues.price)){
         // console.log(storageRef);
-        const fileRef = storageRef; 
-        // ref(storage, `images/${inputValues.prodkey}`);
+        const fileRef = ref(storage, `images/${inputValues.prodkey}`); 
+        // storageRef; 
         // console.log(fileRef)
-        const fileExists = await getMetadata(fileRef)
-          .then(metadata => {
-            if (metadata) {
-              console.log('metadata is true')
-              return true;
+        try {
+              const meta = await getMetadata(fileRef);
+              if (!meta) {
+                
+              // proceed with uploading the file
+              setIsUploading(true);
+              // console.log(storageRef, file); 
+              // await 
+              await uploadBytes(storageRef, file); 
+              setIsUploading(false);
+              // await
+              const url = await getDownloadURL(storageRef) 
+              
+              // console.log(url);
+              imageSrc = url;
+              setKeyState('');
+  
+              // Insert the data into the database
+              const dynamicObjName = inputValues.prodkey;
+              inputObject = {
+                [dynamicObjName]: {
+                  name: inputValues.name,
+                  size: inputValues.size,
+                  medium: inputValues.medium,
+                  price: inputValues.price,
+                  image: imageSrc,
+                  prodkey: inputValues.prodkey,
+                  stripeInvData: inputValues.stripeInvData,
+                  author: inputValues.author,
+                }
+              };
+             
             } else {
+              alert('Make sure you are creating a unique product key. Duplicates are not allowed.');
+              console.log('metadata is true')
               return false;
             }
-          })
-          // .catch(error => {
-          //   console.log(error + ' - storage/object-not-found');
-          //   // return false;
-          // });
-      
-        if (fileExists) {
-          alert('Make sure you are creating a unique product key. Duplicates are not allowed.');
+
+        } catch (error) {
+          console.log('Item does not exist. Proceeding to create new object in firebase storage.');
+           
+              // proceed with uploading the file
+              setIsUploading(true);
+              // console.log(storageRef, file); 
+              // await 
+              await uploadBytes(storageRef, file); 
+              setIsUploading(false);
+              // await
+              const url = await getDownloadURL(storageRef) 
+              
+              // console.log(url);
+              imageSrc = url;
+              setKeyState('');
+  
+              // Insert the data into the database
+              const dynamicObjName = inputValues.prodkey;
+              inputObject = {
+                [dynamicObjName]: {
+                  name: inputValues.name,
+                  size: inputValues.size,
+                  medium: inputValues.medium,
+                  price: inputValues.price,
+                  image: imageSrc,
+                  prodkey: inputValues.prodkey,
+                  stripeInvData: inputValues.stripeInvData,
+                  author: inputValues.author,
+                }
+              };
+              setSavedStatus(!savedStatus); //this line refreshes the rows in the table
+              setInputValues({
+                name: '',
+                size: '',
+                medium: '',
+                price: '',
+                img: '',
+                prodkey: '',
+                stripeInvData: '',  
+                author: '',
+              });
+
+        }
+
+        } else {  //condition for if input text fails regex pattern
+          setInvalidStatus(false);
+          setInputValues({
+            name: '',
+            size: '',
+            medium: '',
+            // price: '',
+            img: '',
+            prodkey: '',
+            stripeInvData: null,
+            author: null,
+          });
           return false;
-        } else {
-          // proceed with uploading the file
-          setIsUploading(true);
-          // console.log(storageRef, file); 
-          await uploadBytes(storageRef, file); 
-          setIsUploading(false);
-          const url = await getDownloadURL(storageRef) 
-          
-          // console.log(url);
-          imageSrc = url;
-          setKeyState('');
+          }
 
-          // Insert the data into the database
-          const dynamicObjName = inputValues.prodkey;
-          inputObject = {
-            [dynamicObjName]: {
-              name: inputValues.name,
-              size: inputValues.size,
-              medium: inputValues.medium,
-              price: inputValues.price,
-              image: imageSrc,
-              prodkey: inputValues.prodkey,
-              stripeInvData: inputValues.stripeInvData,
-              author: inputValues.author,
-            }
-          };
-
+          ///After checking if object exists in storage and creating the object to send, then try sending this object to the DB via axios.
           try {
             // console.log(inputObject);
-            const insertRes = await Axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/insert', inputObject)
-            if(insertRes.status === 200){
-              alert('Your item has been added to your inventory!')
-              setSavedStatus(!savedStatus); //this line refreshes the rows in the table
-            }
-            else if (insertRes.status == 500){
-              alert("Make sure you are creating a unique product key. Duplicates are not allowed.")
-            }
+            await Axios.post('https://us-central1-admin-page-vea-collections.cloudfunctions.net/admApp/insert', inputObject)
+            // console.log(insertRes)
+            .then(response => {
+              console.log(response.status);
+              console.log(response.response);
+              if(response.status === 200){
+                alert('Your item has been added to your inventory!')
+                setSavedStatus(!savedStatus); //this line refreshes the rows in the table
+                setInputValues({
+                  name: '',
+                  size: '',
+                  medium: '',
+                  price: '',
+                  img: '',
+                  prodkey: '',
+                  stripeInvData: '',  
+                  author: '',
+                });
+    
+              }
+              else if (response.status === 500){
+                alert("Make sure you are creating a unique product key. Duplicates are not allowed.")
+                setInputValues({
+                  name: '',
+                  size: '',
+                  medium: '',
+                  price: '',
+                  img: '',
+                  prodkey: '',
+                  stripeInvData: '',
+                  author: '',
+                });
+              }
+              
+            })
+            
                  
-            setInputValues({
-              name: '',
-              size: '',
-              medium: '',
-              price: '',
-              img: '',
-              prodkey: '',
-              stripeInvData: '',
-              author: '',
-            });
             
           } catch (error) {
-            console.error(error);
+            console.log(error);
             return false;
           }
         
-        }
-
-      } else {  //condition for if input text fails regex pattern
-        setInvalidStatus(false);
-        setInputValues({
-          name: '',
-          size: '',
-          medium: '',
-          // price: '',
-          img: '',
-          prodkey: '',
-          stripeInvData: null,
-          author: null,
-        });
-        return false;
-      }
+    //end conditional that checks whether regex pattern is valid or not   
     }
     
     useEffect(() => {
