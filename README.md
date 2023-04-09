@@ -1,2 +1,2 @@
-# admin-page-ecomm-store
-Check out a demo for this site at:   --page under construction.
+Live at:   https://admin-page-vea-collections.web.app/
+Check out a demo on: * youtube link *
